@@ -8,6 +8,7 @@ import com.mygdx.main.Main;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+		config.setWindowedMode(1400, 900);
 		config.setForegroundFPS(60);
 		config.setTitle("Physics Project");
 		new Lwjgl3Application(new Main(), config);
