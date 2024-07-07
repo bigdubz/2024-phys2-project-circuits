@@ -17,8 +17,6 @@ public class Main extends Game {
 	public void create () {
 		sr = new ShapeRenderer();
 		sr.setAutoShapeType(true);
-		float clr = 0.5f;
-		sr.setColor(clr,clr,clr,1);
 
 		mainScreen = new MainScreen(this);
 		setScreen(mainScreen);
