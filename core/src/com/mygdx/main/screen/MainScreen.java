@@ -6,20 +6,31 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.main.Component;
 import com.mygdx.main.Main;
 import com.mygdx.main.Point;
+import com.mygdx.main.Wire;
 
 public class MainScreen implements Screen {
 
     Main main;
     OrthographicCamera cam;
     ScreenViewport viewport;
+    Stage stage;
+    Component selectedComponent;
+
 
     public MainScreen(Main main) {
         this.main = main;
         this.cam = new OrthographicCamera();
         this.viewport = new ScreenViewport(this.cam);
+        this.stage = new Stage();
+    }
+
+    public void start() {
     }
 
     @Override
@@ -29,8 +40,12 @@ public class MainScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) addComponent(new Wire(main));
+
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) ((Wire) selectedComponent).setPos2(main.lePoint());
+
         // drag camera
-        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT))
+        if (Gdx.input.isKeyPressed(Input.Keys.TAB))
             cam.translate(
                     -Gdx.input.getDeltaX() * cam.zoom,
                     Gdx.input.getDeltaY() * cam.zoom
@@ -41,9 +56,13 @@ public class MainScreen implements Screen {
 
         msr().begin();
         drawGrid();
+        msr().end();
 
-
-        lePoint(Gdx.input.getX(), Gdx.input.getY());
+        msr().begin(ShapeRenderer.ShapeType.Filled);
+        Point lpnt = main.lePoint();
+		msr().setColor(1,0,0,1);
+		msr().circle(lpnt.x, lpnt.y, 5);
+        stage.draw();
         msr().end();
     }
 
@@ -95,29 +114,21 @@ public class MainScreen implements Screen {
             );
     }
 
-    Point lePoint(int mouseX, int mouseY) {
-        int mapX = mouseX + (int) (cam.position.x - Gdx.graphics.getWidth()*0.5f);
-        int mapY = -mouseY + (int) (cam.position.y + Gdx.graphics.getHeight()*0.5f);
-
-        float x = MathUtils.floor(mapX * main.tileSizeInverse)*main.tileSize;
-        float y = MathUtils.floor(mapY*main.tileSizeInverse)*main.tileSize;
-
-        int xmd100 = mapX % 100;
-        if (mapX >= 0 && xmd100 >= 50) x += main.tileSize;
-        else if (mapX < 0 && xmd100 >= -50 && xmd100 != 0) x += main.tileSize;
-
-        int ymd100 = mapY % 100;
-        if (mapY >= 0 && ymd100 >= 50) y += main.tileSize;
-        else if (mapY < 0 && ymd100 >= -50 && ymd100 != 0)y += main.tileSize;
-
-        msr().setColor(1,0,0,1);
-        msr().circle(x, y, 5);
-
-        return new Point(x, y);
-    }
 
     // msr: Main.ShapeRenderer
-    ShapeRenderer msr() {
+    private ShapeRenderer msr() {
         return main.sr;
+    }
+
+    private void addComponent(Component component) {
+        selectedComponent = component;
+    }
+
+    public OrthographicCamera getCam() {
+        return this.cam;
+    }
+
+    public void addActor(Actor actor) {
+        stage.addActor(actor);
     }
 }

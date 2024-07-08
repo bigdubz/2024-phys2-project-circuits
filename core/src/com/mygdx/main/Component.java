@@ -1,20 +1,20 @@
 package com.mygdx.main;
 
-public abstract class Component {
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
-    private int posX;
-    private int posY;
+public abstract class Component extends Actor {
 
-    Component() {
+    Main main;
+    Point pos;
 
+    Component(Main main) {
+        this.main = main;
+        this.pos = this.main.lePoint();
+        this.main.mainScreen.addActor(this);
     }
 
-
-    public abstract void place();
-    public int getX() {
-        return this.posX;
-    }
-    public int getY() {
-        return this.posY;
+    protected ShapeRenderer msr() {
+        return main.sr;
     }
 }
