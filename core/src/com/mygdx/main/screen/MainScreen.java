@@ -5,14 +5,16 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.main.Component;
 import com.mygdx.main.Main;
-import com.mygdx.main.Point;
+import com.mygdx.main.utils.Point;
 import com.mygdx.main.Wire;
+import com.mygdx.main.utils.Rect;
+
 
 public class MainScreen implements Screen {
 
@@ -21,6 +23,10 @@ public class MainScreen implements Screen {
     ScreenViewport viewport;
     Stage stage;
     Component selectedComponent;
+    Array<Component> components;
+    Rect selectionRect;
+    boolean selection = false;
+    boolean slctdCompPlaced = false;
 
 
     public MainScreen(Main main) {
@@ -28,42 +34,18 @@ public class MainScreen implements Screen {
         this.cam = new OrthographicCamera();
         this.viewport = new ScreenViewport(this.cam);
         this.stage = new Stage();
-    }
-
-    public void start() {
+        this.components = new Array<>();
+        this.selectionRect = new Rect();
     }
 
     @Override
     public void show() {
-
     }
 
     @Override
     public void render(float delta) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) addComponent(new Wire(main));
-
-        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) ((Wire) selectedComponent).setPos2(main.lePoint());
-
-        // drag camera
-        if (Gdx.input.isKeyPressed(Input.Keys.TAB))
-            cam.translate(
-                    -Gdx.input.getDeltaX() * cam.zoom,
-                    Gdx.input.getDeltaY() * cam.zoom
-            );
-
-        msr().setProjectionMatrix(viewport.getCamera().combined);
-        viewport.apply();
-
-        msr().begin();
-        drawGrid();
-        msr().end();
-
-        msr().begin(ShapeRenderer.ShapeType.Filled);
-        Point lpnt = main.lePoint();
-		msr().setColor(1,0,0,1);
-		msr().circle(lpnt.x, lpnt.y, 5);
-        stage.draw();
-        msr().end();
+        handleInput();
+        draw();
     }
 
     @Override
@@ -91,6 +73,61 @@ public class MainScreen implements Screen {
 
     }
 
+    void handleInput() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F)) addComponent(new Wire(main));
+        if (selectedComponent != null && !slctdCompPlaced) {
+            if (Gdx.input.isKeyPressed(Input.Keys.F)) ((Wire) selectedComponent).previewPos2(main.lePoint());
+            else {
+                if (((Wire) selectedComponent).setPos2(main.lePoint())) {
+                    slctdCompPlaced = true;
+                }
+            }
+        }
+
+        // drag camera
+        if (Gdx.input.isKeyPressed(Input.Keys.TAB))
+            cam.translate(
+                    -Gdx.input.getDeltaX() * cam.zoom,
+                    Gdx.input.getDeltaY() * cam.zoom
+            );
+
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            startSelection();
+        }
+        if (selection) {
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                rectSelect();
+            } else {
+                clearSelection();
+            }
+        }
+    }
+
+    void draw() {
+        msr().setProjectionMatrix(viewport.getCamera().combined);
+        viewport.apply();
+
+        msr().begin();
+        drawGrid();
+        msr().end();
+
+        msr().begin(ShapeRenderer.ShapeType.Filled);
+        if (!selection) {
+            Point cursor = main.lePoint();
+            msr().setColor(1, 0, 0, 1);
+            msr().circle(cursor.x, cursor.y, 5);
+        }
+        stage.draw();
+        msr().end();
+
+        if (selection) {
+            msr().begin();
+            msr().setColor(1, 1, 1, 1);
+            selectionRect.draw(msr());
+            msr().end();
+        }
+    }
+
     // optimized abomination to draw grid :sob:
     void drawGrid() {
         float clr = 0.5f;
@@ -114,6 +151,27 @@ public class MainScreen implements Screen {
             );
     }
 
+    private void startSelection() {
+        selection = true;
+        int mouseX = Gdx.input.getX() + (int) (getCam().position.x - Gdx.graphics.getWidth()*0.5f);
+        int mouseY = -Gdx.input.getY() + (int) (getCam().position.y + Gdx.graphics.getHeight()*0.5f);
+        Point mouse = new Point(mouseX, mouseY);
+        selectionRect.setP1(mouse);
+    }
+
+    private void rectSelect() {
+        int mouseX = Gdx.input.getX() + (int) (cam.position.x - Gdx.graphics.getWidth()*0.5f);
+        int mouseY = -Gdx.input.getY() + (int) (cam.position.y + Gdx.graphics.getHeight()*0.5f);
+        Point mouse = new Point(mouseX, mouseY);
+        selectionRect.setP2(mouse);
+        selectionRect.updateCoords();
+
+    }
+
+    private void clearSelection() {
+        selection = false;
+        selectionRect.clear();
+    }
 
     // msr: Main.ShapeRenderer
     private ShapeRenderer msr() {
@@ -122,6 +180,8 @@ public class MainScreen implements Screen {
 
     private void addComponent(Component component) {
         selectedComponent = component;
+        components.add(component);
+        slctdCompPlaced = false;
     }
 
     public OrthographicCamera getCam() {
@@ -130,5 +190,10 @@ public class MainScreen implements Screen {
 
     public void addActor(Actor actor) {
         stage.addActor(actor);
+    }
+
+    private void deselect() {
+        selectedComponent = null;
+        slctdCompPlaced = false;
     }
 }

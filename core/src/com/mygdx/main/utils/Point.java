@@ -1,4 +1,4 @@
-package com.mygdx.main;
+package com.mygdx.main.utils;
 
 public class Point {
 

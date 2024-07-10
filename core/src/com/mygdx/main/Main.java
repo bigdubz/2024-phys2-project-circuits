@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.main.screen.MainScreen;
+import com.mygdx.main.utils.Point;
 
 
 public class Main extends Game {
@@ -21,7 +22,6 @@ public class Main extends Game {
 		sr.setAutoShapeType(true);
 		mainScreen = new MainScreen(this);
 		setScreen(mainScreen);
-		mainScreen.start();
 	}
 
 	@Override
