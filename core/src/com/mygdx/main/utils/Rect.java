@@ -36,7 +36,6 @@ public class Rect extends Rectangle {
         }
     }
 
-
     public void setP1(Point p1) {
         this.p1 = p1;
     }
@@ -48,5 +47,49 @@ public class Rect extends Rectangle {
     public void clear() {
         setWidth(0);
         setHeight(0);
+    }
+
+    public boolean checkIntersection(Line line) {
+        // down
+        Line l1 = new Line(
+                new Point(
+                        getX(), getY()
+                ),
+                new Point(
+                        getX() + getWidth(), getY()
+                )
+        );
+
+        // left
+        Line l2 = new Line(
+                new Point(
+                        getX(), getY()
+                ),
+                new Point(
+                        getX(), getY() + getHeight()
+                )
+        );
+
+        // right
+        Line l3 = new Line(
+                new Point(
+                        getX() + getWidth(), getY()
+                ),
+                new Point(
+                        getX() + getWidth(), getY() + getHeight()
+                )
+        );
+
+        // up
+        Line l4 = new Line(
+                new Point(
+                        getX(), getY() + getHeight()
+                ),
+                new Point(
+                        getX() + getWidth(), getY() + getHeight()
+                )
+        );
+
+        return l1.intersects(line) || l2.intersects(line) || l3.intersects(line) || l4.intersects(line);
     }
 }

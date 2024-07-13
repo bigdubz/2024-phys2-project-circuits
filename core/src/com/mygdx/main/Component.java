@@ -7,7 +7,8 @@ import com.mygdx.main.utils.Point;
 public abstract class Component extends Actor {
 
     Main main;
-    Point pos;
+    public Point pos;
+    public boolean selected;
 
     Component(Main main) {
         this.main = main;
@@ -17,5 +18,9 @@ public abstract class Component extends Actor {
 
     protected ShapeRenderer msr() {
         return main.sr;
+    }
+
+    public void setSelected(boolean val) {
+        selected = val;
     }
 }

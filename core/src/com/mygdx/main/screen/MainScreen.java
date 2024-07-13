@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.main.Component;
 import com.mygdx.main.Main;
+import com.mygdx.main.utils.Line;
 import com.mygdx.main.utils.Point;
 import com.mygdx.main.Wire;
 import com.mygdx.main.utils.Rect;
@@ -45,6 +46,7 @@ public class MainScreen implements Screen {
     @Override
     public void render(float delta) {
         handleInput();
+        stage.act();
         draw();
     }
 
@@ -165,12 +167,25 @@ public class MainScreen implements Screen {
         Point mouse = new Point(mouseX, mouseY);
         selectionRect.setP2(mouse);
         selectionRect.updateCoords();
-
+        for (Component component : components) {
+            if (component instanceof Wire) {
+                System.out.println("?");
+                Wire wire = (Wire) component;
+                if (selectionRect.checkIntersection(
+                        new Line(wire.pos, wire.pos2)
+                )) {
+                    component.setSelected(true);
+                }
+            }
+        }
     }
 
     private void clearSelection() {
         selection = false;
         selectionRect.clear();
+        for (Component component : components) {
+            component.setSelected(false);
+        }
     }
 
     // msr: Main.ShapeRenderer
@@ -182,6 +197,10 @@ public class MainScreen implements Screen {
         selectedComponent = component;
         components.add(component);
         slctdCompPlaced = false;
+    }
+
+    public void addComponent(Component component, int _unused) {
+        components.add(component);
     }
 
     public OrthographicCamera getCam() {
