@@ -35,16 +35,11 @@ public class Main extends Game {
 		sr.dispose();
 	}
 
-
 	public Point lePoint() {
-		int mouseX = Gdx.input.getX();
-		int mouseY = Gdx.input.getY();
-		int mapX = mouseX + (int) (mainScreen.getCam().position.x - Gdx.graphics.getWidth()*0.5f);
-		int mapY = -mouseY + (int) (mainScreen.getCam().position.y + Gdx.graphics.getHeight()*0.5f);
-
+		int mapX = getMx();
+		int mapY = getMy();
 		float x = MathUtils.floor(mapX*tileSizeInverse)*tileSize;
 		float y = MathUtils.floor(mapY*tileSizeInverse)*tileSize;
-
 		int xmod100 = mapX % 100;
 		if ((mapX >= 0 && xmod100 >= 50) || (mapX < 0 && xmod100 >= -50 && xmod100 != 0)) {
 			x += tileSize;
@@ -55,7 +50,18 @@ public class Main extends Game {
 			y += tileSize;
 		}
 
-
 		return new Point(x, y);
+	}
+
+	private int getMx() {
+		return Gdx.input.getX() + (int) (mainScreen.getCam().position.x - Gdx.graphics.getWidth()*0.5f);
+	}
+
+	private int getMy() {
+		return -Gdx.input.getY() + (int) (mainScreen.getCam().position.y + Gdx.graphics.getHeight()*0.5f);
+	}
+
+	public Point getMouse() {
+		return new Point(getMx(), getMy());
 	}
 }

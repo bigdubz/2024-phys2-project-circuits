@@ -91,6 +91,7 @@ public class MainScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             for (Component component : slctdComponents) {
                 component.remove();
+                components.removeValue(component, true);
             }
         }
 
@@ -163,11 +164,11 @@ public class MainScreen implements Screen {
 
     private void startSelection() {
         selection = true;
-        selectionRect.setP1(getMouse());
+        selectionRect.setP1(main.getMouse());
     }
 
     private void rectSelect() {
-        selectionRect.setP2(getMouse());
+        selectionRect.setP2(main.getMouse());
         for (Component component : components) {
             if (component instanceof Wire) {
                 Wire wire = (Wire) component;
@@ -189,12 +190,6 @@ public class MainScreen implements Screen {
         selection = false;
         selectionRect.clear();
     }
-    private void clearSelection() {
-        slctdComponents.clear();
-        for (Component component : components) {
-            component.setSelected(false);
-        }
-    }
 
     // msr: Main.ShapeRenderer
     private ShapeRenderer msr() {
@@ -207,7 +202,8 @@ public class MainScreen implements Screen {
         slctdCompPlaced = false;
     }
 
-    public void addComponent(Component component, int _unused) {
+    @SuppressWarnings("unused")
+    public void addComponent(Component component, int unused) {
         components.add(component);
     }
 
@@ -219,20 +215,4 @@ public class MainScreen implements Screen {
         stage.addActor(actor);
     }
 
-    private void deselect() {
-        selectedComponent = null;
-        slctdCompPlaced = false;
-    }
-
-    private int getMx() {
-        return Gdx.input.getX() + (int) (cam.position.x - Gdx.graphics.getWidth()*0.5f);
-    }
-
-    private int getMy() {
-        return -Gdx.input.getY() + (int) (cam.position.y + Gdx.graphics.getHeight()*0.5f);
-    }
-
-    Point getMouse() {
-        return new Point(getMx(), getMy());
-    }
 }
