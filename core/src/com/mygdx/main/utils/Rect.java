@@ -42,6 +42,7 @@ public class Rect extends Rectangle {
 
     public void setP2(Point p2) {
         this.p2 = p2;
+        updateCoords();
     }
 
     public void clear() {
@@ -91,5 +92,12 @@ public class Rect extends Rectangle {
         );
 
         return l1.intersects(line) || l2.intersects(line) || l3.intersects(line) || l4.intersects(line);
+    }
+
+    public boolean checkInside(Line line) {
+        return (line.pnt1.x >= getX() && line.pnt1.x <= getX() + getWidth() &&
+                line.pnt1.y >= getY() && line.pnt1.y <= getY() + getHeight()) &&
+                (line.pnt2.x >= getX() && line.pnt2.x <= getX() + getWidth() &&
+                line.pnt2.y >= getY() && line.pnt2.y <= getY() + getHeight());
     }
 }

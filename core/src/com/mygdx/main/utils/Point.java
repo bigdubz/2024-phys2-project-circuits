@@ -14,7 +14,7 @@ public class Point {
         this(pos.x, pos.y);
     }
 
-    public boolean notEqual(Point point2) {
-        return point2.x != x || point2.y != y;
+    public boolean equals(Point point2) {
+        return point2.x == x && point2.y == y;
     }
 }

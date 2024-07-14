@@ -1,6 +1,7 @@
 package com.mygdx.main;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.mygdx.main.utils.Line;
 import com.mygdx.main.utils.Point;
 
 
@@ -51,13 +52,13 @@ public class Wire extends Component {
     }
 
     public void previewPos2(Point pos2) {
-        if (pos2.notEqual(pos) && (pos.y - pos2.y == 0 || pos.x - pos2.x == 0)) {
+        if (!pos2.equals(pos) && (pos.y - pos2.y == 0 || pos.x - pos2.x == 0)) {
             this.pos2 = pos2;
         }
     }
 
     public boolean setPos2(Point pos2) {
-        if (pos2.notEqual(pos) && (pos.y - pos2.y == 0 || pos.x - pos2.x == 0)) {
+        if (!pos2.equals(pos) && (pos.y - pos2.y == 0 || pos.x - pos2.x == 0)) {
             this.pos2 = pos2;
             previewing = false;
             return true;
@@ -83,4 +84,7 @@ public class Wire extends Component {
         }
     }
 
+    public boolean equals(Wire wire) {
+        return new Line(wire.pos, wire.pos2).equals(new Line(this.pos, this.pos2));
+    }
 }

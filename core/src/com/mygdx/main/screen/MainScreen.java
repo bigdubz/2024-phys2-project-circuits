@@ -25,6 +25,7 @@ public class MainScreen implements Screen {
     Stage stage;
     Component selectedComponent;
     Array<Component> components;
+    Array<Component> slctdComponents;
     Rect selectionRect;
     boolean selection = false;
     boolean slctdCompPlaced = false;
@@ -36,6 +37,7 @@ public class MainScreen implements Screen {
         this.viewport = new ScreenViewport(this.cam);
         this.stage = new Stage();
         this.components = new Array<>();
+        this.slctdComponents = new Array<>();
         this.selectionRect = new Rect();
     }
 
@@ -86,6 +88,12 @@ public class MainScreen implements Screen {
             }
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+            for (Component component : slctdComponents) {
+                component.remove();
+            }
+        }
+
         // drag camera
         if (Gdx.input.isKeyPressed(Input.Keys.TAB))
             cam.translate(
@@ -100,7 +108,7 @@ public class MainScreen implements Screen {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 rectSelect();
             } else {
-                clearSelection();
+                stopSelection();
             }
         }
     }
@@ -155,34 +163,34 @@ public class MainScreen implements Screen {
 
     private void startSelection() {
         selection = true;
-        int mouseX = Gdx.input.getX() + (int) (getCam().position.x - Gdx.graphics.getWidth()*0.5f);
-        int mouseY = -Gdx.input.getY() + (int) (getCam().position.y + Gdx.graphics.getHeight()*0.5f);
-        Point mouse = new Point(mouseX, mouseY);
-        selectionRect.setP1(mouse);
+        selectionRect.setP1(getMouse());
     }
 
     private void rectSelect() {
-        int mouseX = Gdx.input.getX() + (int) (cam.position.x - Gdx.graphics.getWidth()*0.5f);
-        int mouseY = -Gdx.input.getY() + (int) (cam.position.y + Gdx.graphics.getHeight()*0.5f);
-        Point mouse = new Point(mouseX, mouseY);
-        selectionRect.setP2(mouse);
-        selectionRect.updateCoords();
+        selectionRect.setP2(getMouse());
         for (Component component : components) {
             if (component instanceof Wire) {
-                System.out.println("?");
                 Wire wire = (Wire) component;
-                if (selectionRect.checkIntersection(
-                        new Line(wire.pos, wire.pos2)
-                )) {
-                    component.setSelected(true);
+                boolean select = selectionRect.checkIntersection(new Line(wire.pos, wire.pos2)) ||
+                        selectionRect.checkInside(new Line(wire.pos, wire.pos2));
+                if (select) {
+                    if (!wire.selected) {
+                        slctdComponents.add(wire);
+                    }
+                } else {
+                    slctdComponents.removeValue(wire, true);
                 }
+                component.setSelected(select);
             }
         }
     }
 
-    private void clearSelection() {
+    private void stopSelection() {
         selection = false;
         selectionRect.clear();
+    }
+    private void clearSelection() {
+        slctdComponents.clear();
         for (Component component : components) {
             component.setSelected(false);
         }
@@ -214,5 +222,17 @@ public class MainScreen implements Screen {
     private void deselect() {
         selectedComponent = null;
         slctdCompPlaced = false;
+    }
+
+    private int getMx() {
+        return Gdx.input.getX() + (int) (cam.position.x - Gdx.graphics.getWidth()*0.5f);
+    }
+
+    private int getMy() {
+        return -Gdx.input.getY() + (int) (cam.position.y + Gdx.graphics.getHeight()*0.5f);
+    }
+
+    Point getMouse() {
+        return new Point(getMx(), getMy());
     }
 }
