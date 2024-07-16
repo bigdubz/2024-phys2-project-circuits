@@ -20,36 +20,42 @@ import com.mygdx.main.utils.Rect;
 
 public class MainScreen implements Screen {
 
-    Main main;
-    OrthographicCamera cam;
-    ScreenViewport viewport;
-    OrthographicCamera uicam;
-    ScreenViewport uiport;
-    Stage stage;
+    final Main main;
+    final OrthographicCamera cam;
+    final ScreenViewport viewport;
+    final OrthographicCamera uicam;
+    final ScreenViewport uiport;
+    final Stage stage;
+    final Array<String> allTypes;
+    final Array<Component> components;
+    final Array<Component> slctdComponents;
     Component selectedComponent;
     String selectedType;
-    Array<String> allTypes;
-    Array<Component> components;
-    Array<Component> slctdComponents;
-    Rect selectionRect;
+    final Rect selectionRect;
     boolean selection = false;
     boolean slctdCompPlaced = false;
     int typeIndex = 0;
 
     public MainScreen(Main main) {
         this.main = main;
+
         this.cam = new OrthographicCamera();
         this.viewport = new ScreenViewport(this.cam);
+
         this.uicam = new OrthographicCamera();
         this.uiport = new ScreenViewport(this.uicam);
+
         this.stage = new Stage();
+
         this.components = new Array<>();
         this.slctdComponents = new Array<>();
-        this.selectionRect = new Rect();
-        this.selectedType = "Wire";
+
         this.allTypes = new Array<>();
         this.allTypes.add("Wire");
         this.allTypes.add("Battery");
+
+        this.selectionRect = new Rect();
+        this.selectedType = allTypes.get(0);
     }
 
     @Override
@@ -169,6 +175,7 @@ public class MainScreen implements Screen {
 
         // draw ui (will make a UI class if this gets long enough)
         uiport.apply(true);
+        msb().setProjectionMatrix(uiport.getCamera().combined);
         main.sb.begin();
         drawText(selectedType, 100, 100);
         main.sb.end();
@@ -273,7 +280,7 @@ public class MainScreen implements Screen {
     }
 
     private void drawText(String text, float x, float y) {
-        main.font.draw(main.sb, text, x, y);
+        main.font.draw(msb(), text, x, y);
     }
 
     private void drawText(String text, Point pos) {

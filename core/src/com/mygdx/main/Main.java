@@ -39,6 +39,8 @@ public class Main extends Game {
 	@Override
 	public void dispose () {
 		sr.dispose();
+		sb.dispose();
+		font.dispose();
 	}
 
 	public Point lePoint() {
