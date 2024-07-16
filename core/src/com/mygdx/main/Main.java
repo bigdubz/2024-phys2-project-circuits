@@ -18,7 +18,7 @@ public class Main extends Game {
 	public BitmapFont font;
 	public final int tileSize = 100; // px
 	public final float tileSizeInverse = 1f / tileSize;
-	MainScreen mainScreen;
+	public MainScreen mainScreen;
 
 	@Override
 	public void create () {

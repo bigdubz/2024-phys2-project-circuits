@@ -1,7 +1,8 @@
-package com.mygdx.main;
+package com.mygdx.main.component;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.mygdx.main.Main;
 import com.mygdx.main.utils.Point;
 
 public abstract class Component extends Actor {
@@ -39,4 +40,9 @@ public abstract class Component extends Actor {
         return false;
     }
 
+    public boolean equals(Component other) {
+        return (pos1.equals(other.pos1) || pos1.equals(other.pos2)) &&
+                (pos2.equals(other.pos1) || pos2.equals(other.pos2)) &&
+                this.getClass() == other.getClass();
+    }
 }

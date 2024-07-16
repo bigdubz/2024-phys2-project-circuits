@@ -10,11 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.mygdx.main.Component;
+import com.mygdx.main.component.Component;
 import com.mygdx.main.Main;
 import com.mygdx.main.utils.Line;
 import com.mygdx.main.utils.Point;
-import com.mygdx.main.Wire;
+import com.mygdx.main.component.Wire;
 import com.mygdx.main.utils.Rect;
 
 
@@ -28,12 +28,13 @@ public class MainScreen implements Screen {
     Stage stage;
     Component selectedComponent;
     String selectedType;
+    Array<String> allTypes;
     Array<Component> components;
     Array<Component> slctdComponents;
     Rect selectionRect;
     boolean selection = false;
     boolean slctdCompPlaced = false;
-
+    int typeIndex = 0;
 
     public MainScreen(Main main) {
         this.main = main;
@@ -46,6 +47,9 @@ public class MainScreen implements Screen {
         this.slctdComponents = new Array<>();
         this.selectionRect = new Rect();
         this.selectedType = "Wire";
+        this.allTypes = new Array<>();
+        this.allTypes.add("Wire");
+        this.allTypes.add("Battery");
     }
 
     @Override
@@ -86,7 +90,14 @@ public class MainScreen implements Screen {
     }
 
     void handleInput() {
+
+        // select next component
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+            selectNextType();
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+            clearSelected();
             switch (selectedType) {
                 case "Wire":
                     addComponent(new Wire(main));
@@ -94,21 +105,18 @@ public class MainScreen implements Screen {
                 case "Battery":
                     // add battery
                     break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + selectedType);
             }
         }
+
         if (selectedComponent != null && !slctdCompPlaced) {
-            if (Gdx.input.isKeyPressed(Input.Keys.F)) ((Wire) selectedComponent).previewPos2(main.lePoint());
+            if (Gdx.input.isKeyPressed(Input.Keys.F)) selectedComponent.previewPos2(main.lePoint());
             else {
-                if (((Wire) selectedComponent).setPos2(main.lePoint())) {
-                    slctdCompPlaced = true;
-                }
+                placeComponent(selectedComponent);
             }
         }
 
         // delete components
-        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             for (Component component : slctdComponents) {
                 component.remove();
                 components.removeValue(component, true);
@@ -116,7 +124,7 @@ public class MainScreen implements Screen {
         }
 
         // drag camera
-        if (Gdx.input.isKeyPressed(Input.Keys.TAB))
+        if (Gdx.input.isButtonPressed(1))
             cam.translate(
                     -Gdx.input.getDeltaX() * cam.zoom,
                     Gdx.input.getDeltaY() * cam.zoom
@@ -159,7 +167,7 @@ public class MainScreen implements Screen {
             msr().end();
         }
 
-        // draw ui
+        // draw ui (will make a UI class if this gets long enough)
         uiport.apply(true);
         main.sb.begin();
         drawText(selectedType, 100, 100);
@@ -168,25 +176,23 @@ public class MainScreen implements Screen {
 
     // optimized abomination to draw grid :sob:
     void drawGrid() {
-        float clr = 0.5f;
+        float clr = 0.1f;
         msr().setColor(clr,clr,clr,1);
         for (float i = (int) ((cam.position.x - Gdx.graphics.getWidth()*0.5f)*main.tileSizeInverse)*main.tileSize;
-             i < (cam.position.x + Gdx.graphics.getWidth()*0.5 + main.tileSize); i += main.tileSize)
+             i < (cam.position.x + Gdx.graphics.getWidth()*0.5 + main.tileSize); i += main.tileSize) {
             msr().line(
-                    i,
-                    cam.position.y - Gdx.graphics.getHeight() * 0.5f,
-                    i,
-                    cam.position.y + Gdx.graphics.getHeight() * 0.5f
+                    i, cam.position.y - Gdx.graphics.getHeight()*0.5f,
+                    i, cam.position.y + Gdx.graphics.getHeight()*0.5f
             );
+        }
 
         for (float i = (int) ((cam.position.y - Gdx.graphics.getHeight()*0.5f)*main.tileSizeInverse) * main.tileSize;
-             i < (cam.position.y + Gdx.graphics.getHeight()*0.5f) + main.tileSize; i += main.tileSize)
+             i < (cam.position.y + Gdx.graphics.getHeight()*0.5f) + main.tileSize; i += main.tileSize) {
             msr().line(
-                    cam.position.x - Gdx.graphics.getWidth() * 0.5f,
-                    i,
-                    cam.position.x + Gdx.graphics.getWidth() * 0.5f,
-                    i
+                    cam.position.x - Gdx.graphics.getWidth()*0.5f, i,
+                    cam.position.x + Gdx.graphics.getWidth()*0.5f, i
             );
+        }
     }
 
     private void startSelection() {
@@ -196,26 +202,54 @@ public class MainScreen implements Screen {
 
     private void rectSelect() {
         selectionRect.setP2(main.getMouse());
-        for (Component component : components) {
-            if (component instanceof Wire) {
-                Wire wire = (Wire) component;
-                boolean select = selectionRect.checkIntersection(new Line(wire.pos1, wire.pos2)) ||
-                        selectionRect.checkInside(new Line(wire.pos1, wire.pos2));
-                if (select) {
-                    if (!wire.selected) {
-                        slctdComponents.add(wire);
-                    }
-                } else {
-                    slctdComponents.removeValue(wire, true);
+        for (Component comp : components) {
+            Line compL = new Line(comp.pos1, comp.pos2);
+            if (comp.previewing) continue;
+            boolean select = selectionRect.checkIntersection(compL) || selectionRect.checkInside(compL);
+            if (select) {
+                if (!comp.selected) {
+                    slctdComponents.add(comp);
                 }
-                component.setSelected(select);
+            } else {
+                slctdComponents.removeValue(comp, true);
             }
+            comp.setSelected(select);
         }
     }
 
     private void stopSelection() {
         selection = false;
         selectionRect.clear();
+    }
+
+    private void clearSelected() {
+        for (Component comp : components) {
+            comp.setSelected(false);
+        }
+    }
+
+    private void selectNextType() {
+        selectedType = allTypes.get(++typeIndex % allTypes.size);
+    }
+
+    private void placeComponent(Component component) {
+        if (selectedComponent.setPos2(main.lePoint())) {
+            if (checkExistent(component)) {
+                removeComponent(component);
+            }
+            slctdCompPlaced = true;
+        } else {
+            removeComponent(component);
+        }
+    }
+
+    public boolean checkExistent(Component component) {
+        for (Component comp : components) {
+            if (comp != component && comp.equals(component)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void addComponent(Component component) {
@@ -226,15 +260,24 @@ public class MainScreen implements Screen {
 
     @SuppressWarnings("unused")
     public void addComponent(Component component, int unused) {
-        components.add(component);
+        if (!checkExistent(component)) {
+            components.add(component);
+        } else {
+            component.remove();
+        }
     }
 
-    private void drawText(String text, Point pos) {
-        drawText(text, pos.x, pos.y);
+    public void removeComponent(Component component) {
+        component.remove();
+        components.removeValue(component, true);
     }
 
     private void drawText(String text, float x, float y) {
         main.font.draw(main.sb, text, x, y);
+    }
+
+    private void drawText(String text, Point pos) {
+        drawText(text, pos.x, pos.y);
     }
 
     public OrthographicCamera getCam() {
