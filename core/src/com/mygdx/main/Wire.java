@@ -7,8 +7,6 @@ import com.mygdx.main.utils.Point;
 
 public class Wire extends Component {
 
-    boolean previewing = true;
-    public Point pos2;
     boolean split = false;
 
     public Wire(Main main) {
@@ -17,7 +15,7 @@ public class Wire extends Component {
 
     public Wire(Main main, Point pos1, Point pos2) {
         super(main);
-        this.pos = pos1;
+        this.pos1 = pos1;
         this.pos2 = pos2;
         this.previewing = false;
         this.split = true;
@@ -36,11 +34,11 @@ public class Wire extends Component {
             }
         }
         if (pos2 != null) {
-            msr().rectLine(pos.x, pos.y, pos2.x, pos2.y, 10);
+            msr().rectLine(pos1.x, pos1.y, pos2.x, pos2.y, 10);
             msr().circle(pos2.x, pos2.y, 5);
         }
         msr().setColor(0, 0, 1, parentAlpha);
-        msr().circle(pos.x, pos.y, 5);
+        msr().circle(pos1.x, pos1.y, 5);
     }
 
     @Override
@@ -51,29 +49,20 @@ public class Wire extends Component {
         }
     }
 
+    @Override
     public void previewPos2(Point pos2) {
-        if (!pos2.equals(pos) && (pos.y - pos2.y == 0 || pos.x - pos2.x == 0)) {
+        if (!pos2.equals(pos1) && (pos1.y - pos2.y == 0 || pos1.x - pos2.x == 0)) {
             this.pos2 = pos2;
         }
-    }
-
-    public boolean setPos2(Point pos2) {
-        if (!pos2.equals(pos) && (pos.y - pos2.y == 0 || pos.x - pos2.x == 0)) {
-            this.pos2 = pos2;
-            previewing = false;
-            return true;
-        }
-        remove();
-        return false;
     }
 
     private void split() {
-        int dx = (int) (pos.x - pos2.x);
-        int dy = (int) (pos.y - pos2.y);
+        int dx = (int) (pos1.x - pos2.x);
+        int dy = (int) (pos1.y - pos2.y);
         boolean horizontal = dx != 0;
         int direction = (dx + dy) < 0 ? 1 : -1;
-        setPos2(new Point(horizontal ? this.pos.x + direction * main.tileSize : this.pos.x,
-                horizontal ? this.pos.y : this.pos.y + direction * main.tileSize));
+        setPos2(new Point(horizontal ? this.pos1.x + direction * main.tileSize : this.pos1.x,
+                horizontal ? this.pos1.y : this.pos1.y + direction * main.tileSize));
         Point prev = new Point(this.pos2);
         int totalWires = (int) ((Math.abs(dx) + Math.abs(dy)) * main.tileSizeInverse) - 1;
         for (int i = 0; i < totalWires; i += 1) {
@@ -85,6 +74,6 @@ public class Wire extends Component {
     }
 
     public boolean equals(Wire wire) {
-        return new Line(wire.pos, wire.pos2).equals(new Line(this.pos, this.pos2));
+        return new Line(wire.pos1, wire.pos2).equals(new Line(this.pos1, this.pos2));
     }
 }

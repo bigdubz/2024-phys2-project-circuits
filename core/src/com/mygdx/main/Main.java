@@ -2,6 +2,8 @@ package com.mygdx.main;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -12,6 +14,8 @@ import com.mygdx.main.utils.Point;
 public class Main extends Game {
 
 	public ShapeRenderer sr;
+	public SpriteBatch sb;
+	public BitmapFont font;
 	public final int tileSize = 100; // px
 	public final float tileSizeInverse = 1f / tileSize;
 	MainScreen mainScreen;
@@ -20,6 +24,8 @@ public class Main extends Game {
 	public void create () {
 		sr = new ShapeRenderer();
 		sr.setAutoShapeType(true);
+		sb = new SpriteBatch();
+		font = new BitmapFont();
 		mainScreen = new MainScreen(this);
 		setScreen(mainScreen);
 	}
