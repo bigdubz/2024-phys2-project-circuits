@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.mygdx.main.Main;
 import com.mygdx.main.utils.Line;
 import com.mygdx.main.utils.Point;
+import com.mygdx.main.utils.Rect;
 
 
 public class Wire extends Component {
@@ -18,6 +19,7 @@ public class Wire extends Component {
         super(main);
         this.pos1 = pos1;
         this.pos2 = pos2;
+        this.rect.setPos(this.pos1, this.pos2);
         this.previewing = false;
         this.split = true;
     }
@@ -50,10 +52,8 @@ public class Wire extends Component {
     }
 
     @Override
-    public void previewPos2(Point pos2) {
-        if (!pos2.equals(pos1) && (pos1.y - pos2.y == 0 || pos1.x - pos2.x == 0)) {
-            this.pos2 = pos2;
-        }
+    protected boolean valid(Point pnt) {
+        return !pnt.equals(pos1) && (pos1.y - pnt.y == 0 || pos1.x - pnt.x == 0);
     }
 
     private void split() {
@@ -61,8 +61,10 @@ public class Wire extends Component {
         int dy = (int) (pos1.y - pos2.y);
         boolean horizontal = dx != 0;
         int direction = (dx + dy) < 0 ? 1 : -1;
-        setPos2(new Point(horizontal ? this.pos1.x + direction * main.tileSize : this.pos1.x,
-                horizontal ? this.pos1.y : this.pos1.y + direction * main.tileSize));
+        Point np2 = new Point(horizontal ? this.pos1.x + direction * main.tileSize : this.pos1.x,
+                horizontal ? this.pos1.y : this.pos1.y + direction * main.tileSize);
+        setPos2(np2);
+        this.rect.setP2(np2);
         if (main.mainScreen.checkExistent(this)) {
             main.mainScreen.removeComponent(this);
         }
@@ -78,5 +80,10 @@ public class Wire extends Component {
 
     public boolean equals(Wire wire) {
         return new Line(wire.pos1, wire.pos2).equals(new Line(this.pos1, this.pos2));
+    }
+
+    @Override
+    public boolean checkSelected(Rect slcRect) {
+        return slcRect.overlaps(this.rect);
     }
 }

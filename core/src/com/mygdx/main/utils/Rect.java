@@ -12,6 +12,14 @@ public class Rect extends Rectangle {
     public Rect() {
     }
 
+    public Rect(Point p1) {
+        setP1(p1);
+    }
+
+    public Rect(Point p1, Point p2) {
+        setPos(p1, p2);
+    }
+
     public void draw(ShapeRenderer msr) {
         msr.rect(x, y, width, height);
     }
@@ -36,6 +44,11 @@ public class Rect extends Rectangle {
         }
     }
 
+    public void setPos(Point p1, Point p2) {
+        setP1(p1);
+        setP2(p2);
+    }
+
     public void setP1(Point p1) {
         this.p1 = p1;
     }
@@ -43,61 +56,5 @@ public class Rect extends Rectangle {
     public void setP2(Point p2) {
         this.p2 = p2;
         updateCoords();
-    }
-
-    public void clear() {
-        setWidth(0);
-        setHeight(0);
-    }
-
-    public boolean checkIntersection(Line line) {
-        // down
-        Line l1 = new Line(
-                new Point(
-                        getX(), getY()
-                ),
-                new Point(
-                        getX() + getWidth(), getY()
-                )
-        );
-
-        // left
-        Line l2 = new Line(
-                new Point(
-                        getX(), getY()
-                ),
-                new Point(
-                        getX(), getY() + getHeight()
-                )
-        );
-
-        // right
-        Line l3 = new Line(
-                new Point(
-                        getX() + getWidth(), getY()
-                ),
-                new Point(
-                        getX() + getWidth(), getY() + getHeight()
-                )
-        );
-
-        // up
-        Line l4 = new Line(
-                new Point(
-                        getX(), getY() + getHeight()
-                ),
-                new Point(
-                        getX() + getWidth(), getY() + getHeight()
-                )
-        );
-
-        return l1.intersects(line) || l2.intersects(line) || l3.intersects(line) || l4.intersects(line);
-    }
-
-    public boolean checkInside(Line line) {
-        return (line.pnt1.x >= getX() && line.pnt1.x <= getX() + getWidth() &&
-                line.pnt1.y >= getY() && line.pnt1.y <= getY() + getHeight()) &&
-                (line.pnt2.x >= getX() && line.pnt2.x <= getX() + getWidth() &&
-                line.pnt2.y >= getY() && line.pnt2.y <= getY() + getHeight());
     }
 }

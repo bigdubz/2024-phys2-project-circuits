@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.main.component.Battery;
 import com.mygdx.main.component.Component;
 import com.mygdx.main.Main;
 import com.mygdx.main.utils.Line;
@@ -109,7 +110,7 @@ public class MainScreen implements Screen {
                     addComponent(new Wire(main));
                     break;
                 case "Battery":
-                    // add battery
+                    addComponent(new Battery(main));
                     break;
             }
         }
@@ -144,7 +145,7 @@ public class MainScreen implements Screen {
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 rectSelect();
             } else {
-                stopSelection();
+                selection = false;
             }
         }
     }
@@ -210,9 +211,8 @@ public class MainScreen implements Screen {
     private void rectSelect() {
         selectionRect.setP2(main.getMouse());
         for (Component comp : components) {
-            Line compL = new Line(comp.pos1, comp.pos2);
             if (comp.previewing) continue;
-            boolean select = selectionRect.checkIntersection(compL) || selectionRect.checkInside(compL);
+            boolean select = comp.checkSelected(selectionRect);
             if (select) {
                 if (!comp.selected) {
                     slctdComponents.add(comp);
@@ -222,11 +222,6 @@ public class MainScreen implements Screen {
             }
             comp.setSelected(select);
         }
-    }
-
-    private void stopSelection() {
-        selection = false;
-        selectionRect.clear();
     }
 
     private void clearSelected() {

@@ -7,11 +7,19 @@ import com.mygdx.main.utils.Rect;
 
 public class Battery extends Component {
 
-    Rect rect;
     int Voltage; // Volts
 
-    Battery(Main main) {
+    public Battery(Main main) {
         super(main);
+        rect = new Rect(this.pos1);
+    }
+
+    @Override
+    public void previewPos2(Point pos2) {
+        if (valid(pos2)) {
+            this.pos2 = pos2;
+            rect.setP2(pos2);
+        }
     }
 
     @Override
@@ -27,12 +35,17 @@ public class Battery extends Component {
             }
         }
         if (pos2 != null) {
-
+            rect.draw(msr());
         }
     }
 
     @Override
-    public void previewPos2(Point pos2) {
+    protected boolean valid(Point pnt) {
+        return !pnt.equals(pos1) && !(pos1.y - pnt.y == 0 || pos1.x - pnt.x == 0);
+    }
 
+    @Override
+    public boolean checkSelected(Rect slcRect) {
+        return slcRect.overlaps(this.rect);
     }
 }
