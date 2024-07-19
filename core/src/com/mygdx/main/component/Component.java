@@ -13,6 +13,7 @@ public abstract class Component extends Actor {
     public Point pos2;
     public boolean selected;
     public boolean previewing = true;
+    protected boolean currValid = false;
     Rect rect;
 
     Component(Main main) {
@@ -30,10 +31,15 @@ public abstract class Component extends Actor {
         selected = val;
     }
 
+    public void setPos1(Point pos1) {
+        this.pos1 = pos1;
+        rect.setP1(pos1);
+    }
+
     public void previewPos2(Point pos2) {
-        if (valid(pos2)) {
-            this.pos2 = pos2;
-        }
+        valid(pos2); // check
+        this.pos2 = pos2;
+        rect.setP2(this.pos2);
     }
 
     public boolean setPos2(Point pos2) {
@@ -41,10 +47,17 @@ public abstract class Component extends Actor {
             this.pos2 = pos2;
             previewing = false;
             rect.setP2(this.pos2);
+            placed();
             return true;
         }
         remove();
         return false;
+    }
+
+    public void setPos2(Point pos2, boolean ignore) {
+        this.pos2 = pos2;
+        previewing = false;
+        rect.setP2(this.pos2);
     }
 
     public boolean equals(Component other) {
@@ -54,6 +67,11 @@ public abstract class Component extends Actor {
     }
 
     protected abstract boolean valid(Point pnt);
+
+    /**
+     * Invoked when the component is placed validly
+     */
+    protected abstract void placed();
 
     public abstract boolean checkSelected(Rect slcRect);
 }

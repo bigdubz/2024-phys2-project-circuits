@@ -48,13 +48,13 @@ public class Main extends Game {
 		int mapY = getMy();
 		float x = MathUtils.floor(mapX*tileSizeInverse)*tileSize;
 		float y = MathUtils.floor(mapY*tileSizeInverse)*tileSize;
-		int xmod100 = mapX % 100;
-		if ((mapX >= 0 && xmod100 >= 50) || (mapX < 0 && xmod100 >= -50 && xmod100 != 0)) {
+		int xmod100 = mapX % tileSize;
+		if ((mapX >= 0 && xmod100 >= tileSize*0.5f) || (mapX < 0 && xmod100 >= -tileSize*0.5f && xmod100 != 0)) {
 			x += tileSize;
 		}
 
-		int ymod100 = mapY % 100;
-		if ((mapY >= 0 && ymod100 >= 50) || (mapY < 0 && ymod100 >= -50 && ymod100 != 0)) {
+		int ymod100 = mapY % tileSize;
+		if ((mapY >= 0 && ymod100 >= tileSize*0.5f) || (mapY < 0 && ymod100 >= -tileSize*0.5f && ymod100 != 0)) {
 			y += tileSize;
 		}
 

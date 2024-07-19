@@ -27,14 +27,17 @@ public class Wire extends Component {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if (previewing) {
-            msr().setColor(0.75f, 0.75f, 0, parentAlpha);
-        }
-        else {
-            if (selected) {
-                msr().setColor(1, 0.5f, 0, parentAlpha);
-            } else {
-                msr().setColor(0, 1, 0, parentAlpha);
+            if (!currValid) {
+                msr().setColor(1, 0, 0, parentAlpha);
             }
+            else {
+                msr().setColor(0.75f, 0.75f, 0, parentAlpha);
+            }
+        }
+        else if (selected) {
+            msr().setColor(1, 0.5f, 0, parentAlpha);
+        } else {
+            msr().setColor(0, 1, 0, parentAlpha);
         }
         if (pos2 != null) {
             msr().rectLine(pos1.x, pos1.y, pos2.x, pos2.y, 10);
@@ -53,7 +56,13 @@ public class Wire extends Component {
 
     @Override
     protected boolean valid(Point pnt) {
-        return !pnt.equals(pos1) && (pos1.y - pnt.y == 0 || pos1.x - pnt.x == 0);
+        currValid = !pnt.equals(pos1) && (pos1.y - pnt.y == 0 || pos1.x - pnt.x == 0);
+        return currValid;
+    }
+
+    @Override
+    protected void placed() {
+
     }
 
     private void split() {
@@ -76,10 +85,6 @@ public class Wire extends Component {
             main.mainScreen.addComponent(new Wire(main, prev, pos2), 0);
             prev = new Point(pos2);
         }
-    }
-
-    public boolean equals(Wire wire) {
-        return new Line(wire.pos1, wire.pos2).equals(new Line(this.pos1, this.pos2));
     }
 
     @Override

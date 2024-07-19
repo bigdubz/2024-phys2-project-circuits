@@ -13,7 +13,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.main.component.Battery;
 import com.mygdx.main.component.Component;
 import com.mygdx.main.Main;
-import com.mygdx.main.utils.Line;
 import com.mygdx.main.utils.Point;
 import com.mygdx.main.component.Wire;
 import com.mygdx.main.utils.Rect;
@@ -278,7 +277,7 @@ public class MainScreen implements Screen {
         main.font.draw(msb(), text, x, y);
     }
 
-    private void drawText(String text, Point pos) {
+    public void drawText(String text, Point pos) {
         drawText(text, pos.x, pos.y);
     }
 
