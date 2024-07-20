@@ -96,4 +96,11 @@ public class Battery extends Component {
     public boolean checkSelected(Rect slcRect) {
         return slcRect.overlaps(this.rect);
     }
+
+    @Override
+    public void action() {
+        Line temp = new Line(positive);
+        positive = new Line(negative);
+        negative = new Line(temp);
+    }
 }

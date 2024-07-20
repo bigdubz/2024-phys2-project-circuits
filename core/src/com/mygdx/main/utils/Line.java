@@ -12,6 +12,10 @@ public class Line {
         this.pnt2 = pnt2;
     }
 
+    public Line(Line line) {
+        this(line.pnt1, line.pnt2);
+    }
+
     public void draw(ShapeRenderer msr, float width) {
         msr.rectLine(pnt1.x, pnt1.y, pnt2.x, pnt2.y, width);
     }

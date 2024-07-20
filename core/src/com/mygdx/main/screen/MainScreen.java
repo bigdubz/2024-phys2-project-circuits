@@ -121,12 +121,20 @@ public class MainScreen implements Screen {
             }
         }
 
+        // use action key on selected component
+        if (slctdComponents.size == 1) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                slctdComponents.pop().setSelected(false).action();
+            }
+        }
+
         // delete components
         if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
             for (Component component : slctdComponents) {
                 component.remove();
                 components.removeValue(component, true);
             }
+            slctdComponents.clear();
         }
 
         // drag camera

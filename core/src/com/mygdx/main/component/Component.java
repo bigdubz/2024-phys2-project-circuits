@@ -14,7 +14,7 @@ public abstract class Component extends Actor {
     public boolean selected;
     public boolean previewing = true;
     protected boolean currValid = false;
-    Rect rect;
+    protected Rect rect;
 
     Component(Main main) {
         this.main = main;
@@ -27,8 +27,9 @@ public abstract class Component extends Actor {
         return main.sr;
     }
 
-    public void setSelected(boolean val) {
+    public Component setSelected(boolean val) {
         selected = val;
+        return this;
     }
 
     public void setPos1(Point pos1) {
@@ -65,6 +66,8 @@ public abstract class Component extends Actor {
                 (pos2.equals(other.pos1) || pos2.equals(other.pos2)) &&
                 this.getClass() == other.getClass();
     }
+
+    public abstract void action();
 
     protected abstract boolean valid(Point pnt);
 

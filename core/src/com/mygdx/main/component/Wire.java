@@ -15,6 +15,11 @@ public class Wire extends Component {
         super(main);
     }
 
+    @Override
+    public void action() {
+
+    }
+
     public Wire(Main main, Point pos1, Point pos2) {
         super(main);
         this.pos1 = pos1;
