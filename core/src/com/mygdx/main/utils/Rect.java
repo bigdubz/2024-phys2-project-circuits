@@ -20,6 +20,10 @@ public class Rect extends Rectangle {
         setPos(p1, p2);
     }
 
+    public Rect(float x, float y, float width, float height) {
+        this(new Point(x, y), new Point(x + width, y + height));
+    }
+
     public void draw(ShapeRenderer msr) {
         msr.rect(x, y, width, height);
     }
@@ -57,4 +61,5 @@ public class Rect extends Rectangle {
         this.p2 = p2;
         updateCoords();
     }
+
 }

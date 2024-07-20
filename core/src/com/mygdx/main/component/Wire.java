@@ -96,4 +96,13 @@ public class Wire extends Component {
     public boolean checkSelected(Rect slcRect) {
         return slcRect.overlaps(this.rect);
     }
+
+    @Override
+    public boolean isConnected(Line line) {
+        return getLine().getRect().overlaps(line.getRect());
+    }
+
+    public Line getLine() {
+        return new Line(pos1, pos2);
+    }
 }

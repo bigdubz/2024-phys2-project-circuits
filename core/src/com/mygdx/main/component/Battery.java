@@ -98,6 +98,12 @@ public class Battery extends Component {
     }
 
     @Override
+    public boolean isConnected(Line line) {
+        // TODO: este es estúpido. necesito verificar las líneas vecinas
+        return line.getRect().overlaps(rect);
+    }
+
+    @Override
     public void action() {
         Line temp = new Line(positive);
         positive = new Line(negative);
