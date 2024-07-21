@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.mygdx.main.component.Component;
 import com.mygdx.main.screen.MainScreen;
 import com.mygdx.main.utils.Point;
 
@@ -71,5 +73,9 @@ public class Main extends Game {
 
 	public Point getMouse() {
 		return new Point(getMx(), getMy());
+	}
+
+	public Array<Component> components() {
+		return mainScreen.getComponents();
 	}
 }

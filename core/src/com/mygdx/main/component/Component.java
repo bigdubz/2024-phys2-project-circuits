@@ -3,20 +3,18 @@ package com.mygdx.main.component;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.main.Main;
-import com.mygdx.main.utils.Line;
 import com.mygdx.main.utils.Point;
 import com.mygdx.main.utils.Rect;
 
 public abstract class Component extends Actor {
 
-    Main main;
-    public Point pos1;
-    public Point pos2;
+    protected Main main;
+    protected Point pos1;
+    protected Point pos2;
     protected Rect rect;
+    protected boolean currValid = false;
     public boolean previewing = true;
     public boolean selected = false;
-    protected boolean currValid = false;
-    protected boolean connected = false;
 
     Component(Main main) {
         this.main = main;
@@ -80,5 +78,5 @@ public abstract class Component extends Actor {
 
     public abstract boolean checkSelected(Rect slcRect);
 
-    public abstract boolean isConnected(Line line);
+    public abstract void checkConnected();
 }

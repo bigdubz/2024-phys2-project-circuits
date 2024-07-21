@@ -62,4 +62,12 @@ public class Rect extends Rectangle {
         updateCoords();
     }
 
+    public Rect getExpanded() {
+        Rect rect = new Rect(p1, p2);
+        rect.x -= 5;
+        rect.y -= 5;
+        rect.width += 10;
+        rect.height += 10;
+        return rect;
+    }
 }

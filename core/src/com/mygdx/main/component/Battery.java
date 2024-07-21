@@ -9,6 +9,8 @@ import com.mygdx.main.utils.Rect;
 public class Battery extends Component {
 
     int Voltage; // Volts
+    Wire pos_term;
+    Wire neg_term;
     Line positive;
     Line negative;
 
@@ -50,6 +52,13 @@ public class Battery extends Component {
     }
 
     @Override
+    public void act(float delta) {
+        if (!previewing) {
+            checkConnected();
+        }
+    }
+
+    @Override
     protected boolean valid(Point pnt) {
         float w = Math.abs(pnt.x - pos1.x);
         float h = Math.abs(pnt.y - pos1.y);
@@ -59,7 +68,6 @@ public class Battery extends Component {
 
     @Override
     protected void placed() {
-        // decide positive and negative terminals (AND MAKE BUTTON TO BE ABLE TO SWITCH THEM)
         float w = Math.abs(pos2.x - pos1.x);
         float h = Math.abs(pos2.y - pos1.y);
         if (w > h) {
@@ -98,9 +106,25 @@ public class Battery extends Component {
     }
 
     @Override
-    public boolean isConnected(Line line) {
-        // TODO: este es estúpido. necesito verificar las líneas vecinas
-        return line.getRect().overlaps(rect);
+    public void checkConnected() {
+        if (pos_term != null && neg_term != null) {
+            return;
+        }
+        for (Component comp : main.components()) {
+            if (comp instanceof Wire) {
+                Rect z = positive.getRect();
+                Rect x = comp.rect.getExpanded();
+                System.out.println("positive rect -> [" + z.x + ", " + z.y + ", " + z.width + ", " + z.height + "]");
+                System.out.println("comp rect -> [" + x.x + ", " + x.y + ", " + x.width + ", " + x.height + "]");
+                System.out.println("overlapped: " + z.overlaps(x));
+                if (pos_term == null && positive.getRect().overlaps(comp.rect.getExpanded())) {
+                    pos_term = (Wire) comp;
+                }
+                else if (negative.getRect().overlaps(comp.rect.getExpanded())) {
+                    neg_term = (Wire) comp;
+                }
+            }
+        }
     }
 
     @Override

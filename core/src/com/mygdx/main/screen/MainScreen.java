@@ -20,21 +20,20 @@ import com.mygdx.main.utils.Rect;
 
 public class MainScreen implements Screen {
 
-    final Main main;
-    final OrthographicCamera cam;
-    final ScreenViewport viewport;
-    final OrthographicCamera uicam;
-    final ScreenViewport uiport;
-    final Stage stage;
-    final Array<String> allTypes;
-    final Array<Component> components;
-    final Array<Component> slctdComponents;
-    Component selectedComponent;
-    String selectedType;
-    final Rect selectionRect;
-    boolean selection = false;
-    boolean slctdCompPlaced = false;
-    int typeIndex = 0;
+    private final Main main;
+    private final OrthographicCamera cam;
+    private final ScreenViewport viewport;
+    private final ScreenViewport uiport;
+    private final Stage stage;
+    private final Array<String> allTypes;
+    private final Array<Component> components;
+    private final Array<Component> slctdComponents;
+    private Component selectedComponent;
+    private String selectedType;
+    private final Rect selectionRect;
+    private boolean selection = false;
+    private boolean slctdCompPlaced = false;
+    private int typeIndex = 0;
 
     public MainScreen(Main main) {
         this.main = main;
@@ -42,8 +41,7 @@ public class MainScreen implements Screen {
         this.cam = new OrthographicCamera();
         this.viewport = new ScreenViewport(this.cam);
 
-        this.uicam = new OrthographicCamera();
-        this.uiport = new ScreenViewport(this.uicam);
+        this.uiport = new ScreenViewport();
 
         this.stage = new Stage();
 
@@ -304,5 +302,9 @@ public class MainScreen implements Screen {
     // msb: Main.SpriteBatch
     private SpriteBatch msb() {
         return main.sb;
+    }
+
+    public Array<Component> getComponents() {
+        return components;
     }
 }

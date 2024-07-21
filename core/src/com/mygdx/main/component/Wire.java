@@ -10,6 +10,10 @@ import com.mygdx.main.utils.Rect;
 public class Wire extends Component {
 
     boolean split = false;
+    Component con1;
+    Component con2;
+    Rect term1;
+    Rect term2;
 
     public Wire(Main main) {
         super(main);
@@ -25,6 +29,7 @@ public class Wire extends Component {
         this.pos1 = pos1;
         this.pos2 = pos2;
         this.rect.setPos(this.pos1, this.pos2);
+        setTerminals();
         this.previewing = false;
         this.split = true;
     }
@@ -53,9 +58,12 @@ public class Wire extends Component {
 
     @Override
     public void act(float delta) {
-        if (!previewing && !split) {
-            split();
-            split = true;
+        if (!previewing) {
+            if (!split) {
+                split();
+                split = true;
+            }
+            checkConnected();
         }
     }
 
@@ -67,7 +75,7 @@ public class Wire extends Component {
 
     @Override
     protected void placed() {
-
+        setTerminals();
     }
 
     private void split() {
@@ -98,11 +106,27 @@ public class Wire extends Component {
     }
 
     @Override
-    public boolean isConnected(Line line) {
-        return getLine().getRect().overlaps(line.getRect());
+    public void checkConnected() {
+        if (con1 != null && con2 != null) {
+            return;
+        }
+        for (Component comp : main.components()) {
+            if (comp != this) {
+                if (con1 == null && comp.rect.overlaps(term1)) {
+                    con1 = comp;
+                } else if (con2 == null && comp.rect.overlaps(term2)) {
+                    con2 = comp;
+                }
+            }
+        }
     }
 
     public Line getLine() {
         return new Line(pos1, pos2);
+    }
+
+    private void setTerminals() {
+        term1 = new Rect(pos1.x-5, pos1.y-5, 10, 10);
+        term2 = new Rect(pos2.x-5, pos2.y-5, 10, 10);
     }
 }
