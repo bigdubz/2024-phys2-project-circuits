@@ -17,4 +17,8 @@ public class Point {
     public boolean equals(Point point2) {
         return point2.x == x && point2.y == y;
     }
+
+    public Rect getRect() {
+        return new Rect(x-5, y-5, 10, 10);
+    }
 }

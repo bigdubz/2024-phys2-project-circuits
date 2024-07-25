@@ -62,9 +62,8 @@ public abstract class Component extends Actor {
     }
 
     public boolean equals(Component other) {
-        return (pos1.equals(other.pos1) || pos1.equals(other.pos2)) &&
-                (pos2.equals(other.pos1) || pos2.equals(other.pos2)) &&
-                this.getClass() == other.getClass();
+        return (pos1.getRect().overlaps(other.rect) && pos2.getRect().overlaps(other.rect)) ||
+                (other.pos1.getRect().overlaps(this.rect) && other.pos2.getRect().overlaps(this.rect));
     }
 
     public abstract void action();

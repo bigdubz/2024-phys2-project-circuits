@@ -129,6 +129,7 @@ public class MainScreen implements Screen {
             }
         }
 
+        // add component
         if (selectedComponent != null && !slctdCompPlaced) {
             if (Gdx.input.isKeyPressed(Input.Keys.F)) selectedComponent.previewPos2(main.lePoint());
             else {
@@ -282,8 +283,7 @@ public class MainScreen implements Screen {
         slctdCompPlaced = false;
     }
 
-    @SuppressWarnings("unused")
-    public void addComponent(Component component, int unused) {
+    public void addComponent(Component component, int ignore) {
         if (!checkExistent(component)) {
             components.add(component);
         } else {
@@ -300,9 +300,11 @@ public class MainScreen implements Screen {
         main.font.draw(msb(), text, x, y);
     }
 
-    public void drawText(String text, Point pos) {
-        drawText(text, pos.x, pos.y);
-    }
+    // TODO delete later
+    @SuppressWarnings({})
+//    public void drawText(String text, Point pos) {
+//        drawText(text, pos.x, pos.y);
+//    }
 
     public OrthographicCamera getCam() {
         return this.cam;
@@ -311,6 +313,7 @@ public class MainScreen implements Screen {
     public void addActor(Actor actor) {
         stage.addActor(actor);
     }
+
     // msr: Main.ShapeRenderer
     private ShapeRenderer msr() {
         return main.sr;

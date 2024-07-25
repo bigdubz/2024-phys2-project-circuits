@@ -2,7 +2,6 @@ package com.mygdx.main.component;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.mygdx.main.Main;
-import com.mygdx.main.utils.Line;
 import com.mygdx.main.utils.Point;
 import com.mygdx.main.utils.Rect;
 
@@ -59,10 +58,6 @@ public class Wire extends Component {
     @Override
     public void act(float delta) {
         if (!previewing) {
-            if (!split) {
-                split();
-                split = true;
-            }
             checkConnected();
         }
     }
@@ -77,6 +72,10 @@ public class Wire extends Component {
 
     @Override
     protected void placed() {
+        if (!split) {
+            split = true;
+            split();
+        }
         setTerminals();
     }
 
@@ -118,12 +117,8 @@ public class Wire extends Component {
         }
     }
 
-    public Line getLine() {
-        return new Line(pos1, pos2);
-    }
-
     private void setTerminals() {
-        term1 = new Rect(pos1.x-5, pos1.y-5, 10, 10);
-        term2 = new Rect(pos2.x-5, pos2.y-5, 10, 10);
+        term1 = pos1.getRect();
+        term2 = pos2.getRect();
     }
 }

@@ -3,7 +3,6 @@ package com.mygdx.main.component;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.mygdx.main.Main;
 import com.mygdx.main.utils.Point;
-import com.mygdx.main.utils.Rect;
 
 public class Resistor extends Component{
 

@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.mygdx.main.Main;
 import com.mygdx.main.utils.Line;
 import com.mygdx.main.utils.Point;
-import com.mygdx.main.utils.Rect;
 
 public class Battery extends Component {
 
