@@ -76,7 +76,9 @@ public abstract class Component extends Actor {
      */
     protected abstract void placed();
 
-    public abstract boolean checkSelected(Rect slcRect);
+    public boolean checkSelected(Rect slcRect) {
+        return slcRect.overlaps(this.rect);
+    }
 
     public abstract void checkConnected();
 }

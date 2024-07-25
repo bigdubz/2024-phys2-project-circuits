@@ -19,13 +19,6 @@ public class Battery extends Component {
     }
 
     @Override
-    public void previewPos2(Point pos2) {
-        valid(pos2); // check
-        this.pos2 = pos2;
-        rect.setP2(this.pos2);
-    }
-
-    @Override
     public void draw(Batch batch, float parentAlpha) {
         if (previewing) {
             if (!currValid) {
@@ -62,7 +55,7 @@ public class Battery extends Component {
     protected boolean valid(Point pnt) {
         float w = Math.abs(pnt.x - pos1.x);
         float h = Math.abs(pnt.y - pos1.y);
-        currValid = !pnt.equals(pos1) && !(pos1.y - pnt.y == 0 || pos1.x - pnt.x == 0) && (w != h);
+        currValid = w*h != 0 && w + h == 300;
         return currValid;
     }
 
@@ -71,10 +64,8 @@ public class Battery extends Component {
         float w = Math.abs(pos2.x - pos1.x);
         float h = Math.abs(pos2.y - pos1.y);
         if (w > h) {
-            if ((h * main.tileSizeInverse) % 2 == 1) {
-                setPos1(new Point(pos1.x, pos1.y - 0.5f*main.tileSize));
-                setPos2(new Point(pos2.x, pos2.y - 0.5f*main.tileSize), true);
-            }
+            setPos1(new Point(pos1.x, pos1.y - 0.5f*main.tileSize));
+            setPos2(new Point(pos2.x, pos2.y - 0.5f*main.tileSize), true);
             positive = new Line(
                     new Point(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y)),
                     new Point(Math.min(pos1.x, pos2.x), Math.max(pos1.y, pos2.y))
@@ -86,10 +77,8 @@ public class Battery extends Component {
             return;
         }
 
-        if ((w * main.tileSizeInverse) % 2 == 1) {
-            setPos1(new Point(pos1.x + 0.5f*main.tileSize, pos1.y));
-            setPos2(new Point(pos2.x + 0.5f*main.tileSize, pos2.y), true);
-        }
+        setPos1(new Point(pos1.x + 0.5f*main.tileSize, pos1.y));
+        setPos2(new Point(pos2.x + 0.5f*main.tileSize, pos2.y), true);
         positive = new Line(
                 new Point(Math.min(pos1.x, pos2.x), Math.max(pos1.y, pos2.y)),
                 new Point(Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y))
@@ -100,10 +89,6 @@ public class Battery extends Component {
         );
     }
 
-    @Override
-    public boolean checkSelected(Rect slcRect) {
-        return slcRect.overlaps(this.rect);
-    }
 
     @Override
     public void checkConnected() {
@@ -112,11 +97,6 @@ public class Battery extends Component {
         }
         for (Component comp : main.components()) {
             if (comp instanceof Wire) {
-                Rect z = positive.getRect();
-                Rect x = comp.rect.getExpanded();
-                System.out.println("positive rect -> [" + z.x + ", " + z.y + ", " + z.width + ", " + z.height + "]");
-                System.out.println("comp rect -> [" + x.x + ", " + x.y + ", " + x.width + ", " + x.height + "]");
-                System.out.println("overlapped: " + z.overlaps(x));
                 if (pos_term == null && positive.getRect().overlaps(comp.rect.getExpanded())) {
                     pos_term = (Wire) comp;
                 }

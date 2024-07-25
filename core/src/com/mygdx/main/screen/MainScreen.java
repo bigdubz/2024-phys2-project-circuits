@@ -13,10 +13,21 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.main.component.Battery;
 import com.mygdx.main.component.Component;
 import com.mygdx.main.Main;
+import com.mygdx.main.component.Resistor;
 import com.mygdx.main.utils.Point;
 import com.mygdx.main.component.Wire;
 import com.mygdx.main.utils.Rect;
 
+/*
+Calculate shit across components:
+    - We know the total voltage a battery supplies, and the internal resistance of each component.
+    1-  Calculate total resistance as if it were a single component (combined resistance)
+    2-  Find total current going through the circuit (from the beginning til the end)
+    3-  Go through the circuit, calculating the voltage across each component in series and subtracting that value from
+        the total voltage
+    4-  Once the voltage across a component is known, current can be calculated
+    5-  For every junction encountered, repeat steps 1 through 4.
+*/
 
 public class MainScreen implements Screen {
 
@@ -51,6 +62,7 @@ public class MainScreen implements Screen {
         this.allTypes = new Array<>();
         this.allTypes.add("Wire");
         this.allTypes.add("Battery");
+        this.allTypes.add("Resistor");
 
         this.selectionRect = new Rect();
         this.selectedType = allTypes.get(0);
@@ -95,6 +107,8 @@ public class MainScreen implements Screen {
 
     void handleInput() {
 
+        System.out.println(components);
+
         // select next component
         if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
             selectNextType();
@@ -108,6 +122,9 @@ public class MainScreen implements Screen {
                     break;
                 case "Battery":
                     addComponent(new Battery(main));
+                    break;
+                case "Resistor":
+                    addComponent(new Resistor(main));
                     break;
             }
         }

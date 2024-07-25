@@ -69,7 +69,9 @@ public class Wire extends Component {
 
     @Override
     protected boolean valid(Point pnt) {
-        currValid = !pnt.equals(pos1) && (pos1.y - pnt.y == 0 || pos1.x - pnt.x == 0);
+        float w = Math.abs(pnt.x - pos1.x);
+        float h = Math.abs(pnt.y - pos1.y);
+        currValid = w*h == 0 && w + h >= 100;
         return currValid;
     }
 
@@ -98,11 +100,6 @@ public class Wire extends Component {
             main.mainScreen.addComponent(new Wire(main, prev, pos2), 0);
             prev = new Point(pos2);
         }
-    }
-
-    @Override
-    public boolean checkSelected(Rect slcRect) {
-        return slcRect.overlaps(this.rect);
     }
 
     @Override
