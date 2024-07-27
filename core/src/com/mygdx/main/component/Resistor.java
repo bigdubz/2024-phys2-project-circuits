@@ -6,10 +6,10 @@ import com.mygdx.main.utils.Point;
 
 public class Resistor extends Component {
 
-    float resistance;
 
     public Resistor(Main main) {
         super(main);
+        resistance = 5;
     }
 
     @Override

@@ -14,13 +14,15 @@ public abstract class Component extends Actor {
     protected Point pos1;
     protected Point pos2;
     protected Rect rect;
-    protected Array<Component> con1;
-    protected Array<Component> con2;
     protected Rect term1;
     protected Rect term2;
+    public Array<Component> con1;
+    public Array<Component> con2;
     protected boolean currValid = false;
     public boolean previewing = true;
     public boolean selected = false;
+    public float current; // amps
+    public float resistance; // ohms
 
     Component(Main main) {
         this.main = main;

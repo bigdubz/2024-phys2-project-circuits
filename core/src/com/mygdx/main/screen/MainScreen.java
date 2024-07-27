@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.mygdx.main.Circuit;
 import com.mygdx.main.component.Battery;
 import com.mygdx.main.component.Component;
 import com.mygdx.main.Main;
@@ -41,6 +42,7 @@ public class MainScreen implements Screen {
     private final Array<Component> slctdComponents;
     private Component selectedComponent;
     private String selectedType;
+    private Circuit testCircuit;
     private final Rect selectionRect;
     private boolean selection = false;
     private boolean slctdCompPlaced = false;
@@ -107,8 +109,19 @@ public class MainScreen implements Screen {
 
     void handleInput() {
 
-        // todo remove
-//        System.out.println(components);
+        // test
+        if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
+            if (createCircuit()) {
+                System.out.println("success");
+            } else {
+                testCircuit = null;
+            }
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C) && testCircuit != null) {
+            System.out.println(testCircuit.getTotalResistance());
+        }
+        // end test
 
         // select next component
         if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
@@ -290,6 +303,11 @@ public class MainScreen implements Screen {
         } else {
             component.remove();
         }
+    }
+
+    private boolean createCircuit() {
+        testCircuit = new Circuit(main, components);
+        return testCircuit.checkValid();
     }
 
     public void removeComponent(Component component) {

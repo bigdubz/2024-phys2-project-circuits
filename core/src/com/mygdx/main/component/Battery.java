@@ -7,14 +7,16 @@ import com.mygdx.main.utils.Point;
 
 public class Battery extends Component {
 
-    int Voltage; // Volts
-    Wire pos_term;
-    Wire neg_term;
+    int voltage; // Volts
+    public Component pos_term;
+    public Component neg_term;
     Line positive;
     Line negative;
 
     public Battery(Main main) {
         super(main);
+        resistance = 0;
+        voltage = 12;
     }
 
     @Override
@@ -65,18 +67,20 @@ public class Battery extends Component {
 
     @Override
     public void checkConnected() {
-        if (pos_term != null && neg_term != null) {
-            return;
-        }
         for (Component comp : main.components()) {
-            if (comp instanceof Wire) {
-                if (pos_term == null && positive.getRect().overlaps(comp.rect.getExpanded())) {
-                    pos_term = (Wire) comp;
-                }
-                else if (negative.getRect().overlaps(comp.rect.getExpanded())) {
-                    neg_term = (Wire) comp;
-                }
+            if (comp == this) continue;
+            if (pos_term == null && positive.getRect().overlaps(comp.rect.getExpanded())) {
+                pos_term = comp;
             }
+            else if (negative.getRect().overlaps(comp.rect.getExpanded())) {
+                neg_term = comp;
+            }
+        }
+        if (!main.components().contains(pos_term, true)) {
+            pos_term = null;
+        }
+        if (!main.components().contains(neg_term, true)) {
+            neg_term = null;
         }
     }
 

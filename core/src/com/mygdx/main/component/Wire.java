@@ -11,15 +11,11 @@ public class Wire extends Component {
 
     public Wire(Main main) {
         super(main);
-    }
-
-    @Override
-    public void action() {
-
+        resistance = 0;
     }
 
     public Wire(Main main, Point pos1, Point pos2) {
-        super(main);
+        this(main);
         this.pos1 = pos1;
         this.pos2 = pos2;
         this.rect.setPos(this.pos1, this.pos2);
@@ -99,5 +95,10 @@ public class Wire extends Component {
     protected void setTerminals() {
         term1 = pos1.getRect();
         term2 = pos2.getRect();
+    }
+
+    @Override
+    public void action() {
+
     }
 }
