@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.mygdx.main.Main;
 import com.mygdx.main.utils.Point;
 
-public class Resistor extends Component{
+public class Resistor extends Component {
 
     float resistance;
 
@@ -50,7 +50,7 @@ public class Resistor extends Component{
     protected boolean valid(Point pnt) {
         float w = Math.abs(pnt.x - pos1.x);
         float h = Math.abs(pnt.y - pos1.y);
-        currValid = w*h == 0 && w + h == 200;
+        currValid = w*h + w + h == 200;
         return currValid;
     }
 
@@ -60,7 +60,8 @@ public class Resistor extends Component{
     }
 
     @Override
-    public void checkConnected() {
-
+    protected void setTerminals() {
+        term1 = pos1.getRect();
+        term2 = pos2.getRect();
     }
 }

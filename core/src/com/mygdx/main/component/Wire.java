@@ -3,16 +3,11 @@ package com.mygdx.main.component;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.mygdx.main.Main;
 import com.mygdx.main.utils.Point;
-import com.mygdx.main.utils.Rect;
 
 
 public class Wire extends Component {
 
     boolean split = false;
-    Component con1;
-    Component con2;
-    Rect term1;
-    Rect term2;
 
     public Wire(Main main) {
         super(main);
@@ -76,7 +71,6 @@ public class Wire extends Component {
             split = true;
             split();
         }
-        setTerminals();
     }
 
     private void split() {
@@ -102,22 +96,7 @@ public class Wire extends Component {
     }
 
     @Override
-    public void checkConnected() {
-        if (con1 != null && con2 != null) {
-            return;
-        }
-        for (Component comp : main.components()) {
-            if (comp != this) {
-                if (con1 == null && comp.rect.overlaps(term1)) {
-                    con1 = comp;
-                } else if (con2 == null && comp.rect.overlaps(term2)) {
-                    con2 = comp;
-                }
-            }
-        }
-    }
-
-    private void setTerminals() {
+    protected void setTerminals() {
         term1 = pos1.getRect();
         term2 = pos2.getRect();
     }

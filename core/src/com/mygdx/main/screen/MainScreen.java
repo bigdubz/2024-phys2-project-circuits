@@ -107,7 +107,8 @@ public class MainScreen implements Screen {
 
     void handleInput() {
 
-        System.out.println(components);
+        // todo remove
+//        System.out.println(components);
 
         // select next component
         if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {

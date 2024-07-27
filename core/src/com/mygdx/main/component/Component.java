@@ -2,9 +2,11 @@ package com.mygdx.main.component;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.main.Main;
 import com.mygdx.main.utils.Point;
 import com.mygdx.main.utils.Rect;
+
 
 public abstract class Component extends Actor {
 
@@ -12,6 +14,10 @@ public abstract class Component extends Actor {
     protected Point pos1;
     protected Point pos2;
     protected Rect rect;
+    protected Array<Component> con1;
+    protected Array<Component> con2;
+    protected Rect term1;
+    protected Rect term2;
     protected boolean currValid = false;
     public boolean previewing = true;
     public boolean selected = false;
@@ -21,6 +27,8 @@ public abstract class Component extends Actor {
         this.pos1 = this.main.lePoint();
         this.main.mainScreen.addActor(this);
         this.rect = new Rect(this.pos1);
+        this.con1 = new Array<>();
+        this.con2 = new Array<>();
     }
 
     protected ShapeRenderer msr() {
@@ -49,6 +57,7 @@ public abstract class Component extends Actor {
             previewing = false;
             rect.setP2(this.pos2);
             placed();
+            setTerminals();
             return true;
         }
         remove();
@@ -79,5 +88,27 @@ public abstract class Component extends Actor {
         return slcRect.overlaps(this.rect);
     }
 
-    public abstract void checkConnected();
+    public void checkConnected() {
+        for (Component comp : main.components()) {
+            if (comp != this) {
+                if (con1.size < 3  && comp.rect.overlaps(term1) && !con1.contains(comp, true)) {
+                    con1.add(comp);
+                } else if (con2.size < 3 && comp.rect.overlaps(term2) && !con2.contains(comp, true)) {
+                    con2.add(comp);
+                }
+            }
+        }
+        for (Component con : con1) {
+            if (!main.components().contains(con, true)) {
+                con1.removeValue(con, true);
+            }
+        }
+        for (Component con : con2) {
+            if (!main.components().contains(con, true)) {
+                con2.removeValue(con, true);
+            }
+        }
+    }
+
+    protected abstract void setTerminals();
 }

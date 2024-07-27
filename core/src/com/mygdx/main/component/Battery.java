@@ -60,6 +60,28 @@ public class Battery extends Component {
 
     @Override
     protected void placed() {
+    }
+
+
+    @Override
+    public void checkConnected() {
+        if (pos_term != null && neg_term != null) {
+            return;
+        }
+        for (Component comp : main.components()) {
+            if (comp instanceof Wire) {
+                if (pos_term == null && positive.getRect().overlaps(comp.rect.getExpanded())) {
+                    pos_term = (Wire) comp;
+                }
+                else if (negative.getRect().overlaps(comp.rect.getExpanded())) {
+                    neg_term = (Wire) comp;
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void setTerminals() {
         float w = Math.abs(pos2.x - pos1.x);
         float h = Math.abs(pos2.y - pos1.y);
         if (w > h) {
@@ -86,24 +108,6 @@ public class Battery extends Component {
                 new Point(Math.max(pos1.x, pos2.x), Math.min(pos1.y, pos2.y)),
                 new Point(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y))
         );
-    }
-
-
-    @Override
-    public void checkConnected() {
-        if (pos_term != null && neg_term != null) {
-            return;
-        }
-        for (Component comp : main.components()) {
-            if (comp instanceof Wire) {
-                if (pos_term == null && positive.getRect().overlaps(comp.rect.getExpanded())) {
-                    pos_term = (Wire) comp;
-                }
-                else if (negative.getRect().overlaps(comp.rect.getExpanded())) {
-                    neg_term = (Wire) comp;
-                }
-            }
-        }
     }
 
     @Override
