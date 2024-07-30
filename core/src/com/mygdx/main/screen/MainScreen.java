@@ -40,6 +40,7 @@ public class MainScreen implements Screen {
     private final Array<String> allTypes;
     private final Array<Component> components;
     private final Array<Component> slctdComponents;
+    private final Array<Component> visited;
     private Component selectedComponent;
     private String selectedType;
     private Circuit testCircuit;
@@ -60,6 +61,7 @@ public class MainScreen implements Screen {
 
         this.components = new Array<>();
         this.slctdComponents = new Array<>();
+        this.visited = new Array<>();
 
         this.allTypes = new Array<>();
         this.allTypes.add("Wire");
@@ -128,6 +130,7 @@ public class MainScreen implements Screen {
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            visited.clear();
             for (int i = 0; i < components.size; i++) {
                 Component comp = components.get(i);
                 if (!(comp instanceof Battery)) continue;
@@ -336,12 +339,6 @@ public class MainScreen implements Screen {
         main.font.draw(msb(), text, x, y);
     }
 
-    // TODO delete later
-    @SuppressWarnings({})
-//    public void drawText(String text, Point pos) {
-//        drawText(text, pos.x, pos.y);
-//    }
-
     public OrthographicCamera getCam() {
         return this.cam;
     }
@@ -362,5 +359,9 @@ public class MainScreen implements Screen {
 
     public Array<Component> getComponents() {
         return components;
+    }
+
+    public Array<Component> getVisited() {
+        return this.visited;
     }
 }

@@ -120,14 +120,64 @@ public abstract class Component extends Actor {
         if (!this.to.isEmpty()) return;
         this.to = direction;
         this.toPnt = point;
-        for (Component comp : this.to) {
-            if (comp instanceof Battery) continue;
+
+        // si en serie, 100% funciona
+        if (this.to.size == 1) {
+            Component comp = this.to.first();
+            if (comp instanceof Battery) return;
             if (comp.pos1.equals(this.toPnt)) {
                 comp.setDirection(comp.con2, comp.pos2);
             } else {
                 comp.setDirection(comp.con1, comp.pos1);
             }
+            return;
         }
+
+        // si en paralelo, necesita trabajo
+        for (Component comp : this.to) {
+            if (comp instanceof Battery) continue;
+            if (findNegativeTerminal(comp, comp.pos1)) {
+                comp.setDirection(comp.con1, comp.pos1);
+            } else {
+                comp.setDirection(comp.con2, comp.pos2);
+            }
+        }
+    }
+
+    boolean findNegativeTerminal(Component comp1, Point currPoint) {
+        if (comp1 instanceof Battery) {
+            return currPoint.getRect().overlaps(((Battery) comp1).negative.getRect());
+        }
+        if (!main.mainScreen.getVisited().contains(comp1, true)) {
+            main.mainScreen.getVisited().add(comp1);
+        } else {
+            return false;
+        }
+        for (int i = 0; i < comp1.con1.size; i++) {
+            Component comp2 = comp1.con1.get(i);
+            if (currPoint.equals(comp2.pos1)) {
+                if (findNegativeTerminal(comp2, comp2.pos2)) {
+                    return true;
+                }
+            } else {
+                if (findNegativeTerminal(comp2, comp2.pos1)) {
+                    return true;
+                }
+            }
+        }
+        for (int i = 0; i < comp1.con2.size; i++) {
+            Component comp2 = comp1.con2.get(i);
+            if (currPoint.equals(comp2.pos1)) {
+                if (findNegativeTerminal(comp2, comp2.pos2)) {
+                    return true;
+                }
+            } else {
+                if (findNegativeTerminal(comp2, comp2.pos1)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected abstract void setTerminals();
