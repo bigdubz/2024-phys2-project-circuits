@@ -18,6 +18,8 @@ public abstract class Component extends Actor {
     protected Rect term2;
     public Array<Component> con1;
     public Array<Component> con2;
+    public Array<Component> to;
+    public Point toPnt;
     protected boolean currValid = false;
     public boolean previewing = true;
     public boolean selected = false;
@@ -31,6 +33,7 @@ public abstract class Component extends Actor {
         this.rect = new Rect(this.pos1);
         this.con1 = new Array<>();
         this.con2 = new Array<>();
+        this.to = new Array<>();
     }
 
     protected ShapeRenderer msr() {
@@ -108,6 +111,21 @@ public abstract class Component extends Actor {
         for (Component con : con2) {
             if (!main.components().contains(con, true)) {
                 con2.removeValue(con, true);
+            }
+        }
+    }
+
+    // NEED SOMETING LIKE A PATHFINDER IN ADDITION TO THIS
+    public void setDirection(Array<Component> direction, Point point) {
+        if (!this.to.isEmpty()) return;
+        this.to = direction;
+        this.toPnt = point;
+        for (Component comp : this.to) {
+            if (comp instanceof Battery) continue;
+            if (comp.pos1.equals(this.toPnt)) {
+                comp.setDirection(comp.con2, comp.pos2);
+            } else {
+                comp.setDirection(comp.con1, comp.pos1);
             }
         }
     }

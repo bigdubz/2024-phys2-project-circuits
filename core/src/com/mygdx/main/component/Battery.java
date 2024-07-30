@@ -68,8 +68,8 @@ public class Battery extends Component {
     @Override
     public void checkConnected() {
         for (Component comp : main.components()) {
-            if (comp == this) continue;
-            if (pos_term == null && positive.getRect().overlaps(comp.rect.getExpanded())) {
+            if (comp == this || comp.previewing) continue;
+            if (positive.getRect().overlaps(comp.rect.getExpanded())) {
                 pos_term = comp;
             }
             else if (negative.getRect().overlaps(comp.rect.getExpanded())) {
@@ -81,6 +81,14 @@ public class Battery extends Component {
         }
         if (!main.components().contains(neg_term, true)) {
             neg_term = null;
+        }
+    }
+
+    public void setDir() {
+        if (pos_term.pos1.getRect().overlaps(positive.getRect())) {
+            pos_term.setDirection(pos_term.con2, pos_term.pos2);
+        } else {
+            pos_term.setDirection(pos_term.con1, pos_term.pos1);
         }
     }
 

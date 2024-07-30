@@ -30,14 +30,12 @@ public class Circuit {
 
     public boolean checkCompleteCircuit() {
         Component nextComponent = mainBattery.pos_term;
-        while (!(nextComponent instanceof Battery)) {
-            try {
-                nextComponent = nextComponent.con1.first();
-            } catch (IllegalStateException ignored) {
-                return false;
-            } catch (NullPointerException ignored) {
-                System.out.println(nextComponent.getClass());
+        try {
+            while (!(nextComponent.to.first() instanceof Battery)) {
+                nextComponent = nextComponent.to.first();
             }
+        } catch (IllegalStateException | NullPointerException ignored) {
+            return false;
         }
         return true;
     }
@@ -50,17 +48,9 @@ public class Circuit {
 
         Component nextComponent = mainBattery.pos_term;
         while (!(nextComponent instanceof Battery)) {
-            nextComponent = nextComponent.con1.first();
             resistance += nextComponent.resistance;
+            nextComponent = nextComponent.to.first();
         }
         return resistance;
-    }
-
-    public void updateCircuit(Array<Component> newCircuit) {
-        circuit = new Array<>(newCircuit);
-    }
-
-    public void addComponent(Component comp) {
-        circuit.add(comp);
     }
 }

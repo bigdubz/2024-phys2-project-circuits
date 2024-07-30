@@ -77,7 +77,6 @@ public class MainScreen implements Screen {
     @Override
     public void render(float delta) {
         handleInput();
-        stage.act();
         draw();
     }
 
@@ -114,7 +113,25 @@ public class MainScreen implements Screen {
             if (createCircuit()) {
                 System.out.println("success");
             } else {
+                System.out.println("nosuccess");
                 testCircuit = null;
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+            System.out.println(main.lePoint().x + ", " + main.lePoint().y);
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+            for (int i = 0; i < components.size; i++) {
+                Component comp = components.get(i);
+                comp.checkConnected();
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            for (int i = 0; i < components.size; i++) {
+                Component comp = components.get(i);
+                if (!(comp instanceof Battery)) continue;
+                ((Battery) comp).setDir();
             }
         }
 

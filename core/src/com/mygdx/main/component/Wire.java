@@ -44,6 +44,10 @@ public class Wire extends Component {
             msr().circle(pos2.x, pos2.y, 5);
         }
         msr().circle(pos1.x, pos1.y, 5);
+        if (toPnt != null) {
+            msr().setColor(0.3f, 0.7f, 1, 1);
+            toPnt.getRect().draw(msr());
+        }
     }
 
     @Override
