@@ -116,7 +116,7 @@ public class MainScreen implements Screen {
                 System.out.println("success");
             } else {
                 System.out.println("nosuccess");
-                testCircuit = null;
+//                testCircuit = null;
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
@@ -127,6 +127,8 @@ public class MainScreen implements Screen {
             for (int i = 0; i < components.size; i++) {
                 Component comp = components.get(i);
                 comp.checkConnected();
+                comp.to = null;
+                comp.toPnt = null;
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
@@ -275,7 +277,9 @@ public class MainScreen implements Screen {
                     slctdComponents.add(comp);
                 }
             } else {
-                slctdComponents.removeValue(comp, true);
+                if (!Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+                    slctdComponents.removeValue(comp, true);
+                }
             }
             comp.setSelected(select);
         }
@@ -363,5 +367,9 @@ public class MainScreen implements Screen {
 
     public Array<Component> getVisited() {
         return this.visited;
+    }
+
+    public Circuit getCircuit() {
+        return testCircuit;
     }
 }

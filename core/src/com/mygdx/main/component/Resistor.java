@@ -39,6 +39,10 @@ public class Resistor extends Component {
             msr().circle(pos2.x, pos2.y, 10);
         }
         msr().circle(pos1.x, pos1.y, 10);
+        if (toPnt != null) {
+            msr().setColor(1, 0, 0, 1);
+            toPnt.getRect().getExpanded().draw(msr());
+        }
     }
 
     @Override

@@ -8,10 +8,12 @@ public class Circuit {
     Array<Component> circuit;
     Main main;
     Battery mainBattery;
+    Array<Series> waitingList;
 
     public Circuit(Main main, Array<Component> circuit) {
         this.main = main;
         this.circuit = new Array<>(circuit);
+        this.waitingList = new Array<>();
     }
 
     public boolean checkValid() {
@@ -52,5 +54,24 @@ public class Circuit {
             nextComponent = nextComponent.to.first();
         }
         return resistance;
+    }
+
+    public void setDir(Component comp) {
+        Array<Series> circuito = new Array<>();
+        new Series(main, this, comp, circuito, true);
+        while (!(waitingList.isEmpty() && circuito.isEmpty())) {
+            for (Series ser : circuito) {
+                ser.setSeriesDir();
+            }
+            for (Series ser : circuito) {
+                ser.move();
+            }
+            circuito.addAll(waitingList);
+            waitingList.clear();
+        }
+    }
+
+    public Array<Series> getWaitingList() {
+        return this.waitingList;
     }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.main.Main;
+import com.mygdx.main.Series;
 import com.mygdx.main.utils.Point;
 import com.mygdx.main.utils.Rect;
 
@@ -33,7 +34,6 @@ public abstract class Component extends Actor {
         this.rect = new Rect(this.pos1);
         this.con1 = new Array<>();
         this.con2 = new Array<>();
-        this.to = new Array<>();
     }
 
     protected ShapeRenderer msr() {
@@ -115,69 +115,18 @@ public abstract class Component extends Actor {
         }
     }
 
-    // NEED SOMETING LIKE A PATHFINDER IN ADDITION TO THIS
-    public void setDirection(Array<Component> direction, Point point) {
-        if (!this.to.isEmpty()) return;
-        this.to = direction;
-        this.toPnt = point;
-
-        // si en serie, 100% funciona
-        if (this.to.size == 1) {
-            Component comp = this.to.first();
-            if (comp instanceof Battery) return;
-            if (comp.pos1.equals(this.toPnt)) {
-                comp.setDirection(comp.con2, comp.pos2);
-            } else {
-                comp.setDirection(comp.con1, comp.pos1);
-            }
-            return;
-        }
-
-        // si en paralelo, necesita trabajo
-        for (Component comp : this.to) {
-            if (comp instanceof Battery) continue;
-            if (findNegativeTerminal(comp, comp.pos1)) {
-                comp.setDirection(comp.con1, comp.pos1);
-            } else {
-                comp.setDirection(comp.con2, comp.pos2);
-            }
-        }
+    public Point getPos1() {
+        return pos1;
     }
 
-    boolean findNegativeTerminal(Component comp1, Point currPoint) {
-        if (comp1 instanceof Battery) {
-            return currPoint.getRect().overlaps(((Battery) comp1).negative.getRect());
-        }
-        if (!main.mainScreen.getVisited().contains(comp1, true)) {
-            main.mainScreen.getVisited().add(comp1);
-        } else {
-            return false;
-        }
-        for (int i = 0; i < comp1.con1.size; i++) {
-            Component comp2 = comp1.con1.get(i);
-            if (currPoint.equals(comp2.pos1)) {
-                if (findNegativeTerminal(comp2, comp2.pos2)) {
-                    return true;
-                }
-            } else {
-                if (findNegativeTerminal(comp2, comp2.pos1)) {
-                    return true;
-                }
-            }
-        }
-        for (int i = 0; i < comp1.con2.size; i++) {
-            Component comp2 = comp1.con2.get(i);
-            if (currPoint.equals(comp2.pos1)) {
-                if (findNegativeTerminal(comp2, comp2.pos2)) {
-                    return true;
-                }
-            } else {
-                if (findNegativeTerminal(comp2, comp2.pos1)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public Point getPos2() {
+        return pos2;
+    }
+
+    public void setDirection(Array<Component> direction, Point point) {
+        this.to = direction;
+        this.toPnt = point;
+        main.mainScreen.getCircuit().setDir(this);
     }
 
     protected abstract void setTerminals();
