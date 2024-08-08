@@ -33,7 +33,7 @@ public class Circuit {
         }
     }
 
-    public double getEquivalentResistance() {
+    public void getEquivalentResistance() {
         Array<Series> markedForRemoval = new Array<>();
         Series markedForAddition = null;
         Array<Series> currentChecking = new Array<>(allSerieses);
@@ -102,12 +102,6 @@ public class Circuit {
         resistance = r;
         current = voltage / resistance;
         canShow = true;
-        return resistance;
-    }
-
-    public double getCurrent() {
-        current = voltage / resistance;
-        return current;
     }
 
     public boolean setDir(Component comp) {

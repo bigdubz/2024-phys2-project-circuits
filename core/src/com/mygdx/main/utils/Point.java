@@ -21,8 +21,4 @@ public class Point {
     public Rect getRect() {
         return new Rect(x-5, y-5, 10, 10);
     }
-
-    public float distance(Point p2) {
-        return (float) Math.sqrt((x - p2.x)*(x - p2.x) + (y - p2.y)*(y - p2.y));
-    }
 }

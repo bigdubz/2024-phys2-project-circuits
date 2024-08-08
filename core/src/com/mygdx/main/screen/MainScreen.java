@@ -121,8 +121,9 @@ public class MainScreen implements Screen {
                 message = "Error occurred during circuit creation! (probably open circuit)";
                 msgColor = Color.RED;
                 layout.setText(main.font, message);
+            } else {
+                mainCircuit.getEquivalentResistance();
             }
-            mainCircuit.getEquivalentResistance();
         }
 
         // select next component
@@ -212,6 +213,7 @@ public class MainScreen implements Screen {
         drawGrid();
         msr().end();
 
+        // draw components and cursor
         msr().begin(ShapeRenderer.ShapeType.Filled);
         if (!selection) {
             Point cursor = main.elPunto();
@@ -228,32 +230,45 @@ public class MainScreen implements Screen {
             msr().end();
         }
 
-        // draw UI
+        // <-- draw UI -->
+
         uiport.apply(true);
         msb().setProjectionMatrix(uiport.getCamera().combined);
         main.sb.begin();
         main.font.setColor(1,1,1,1);
+
+        // draw current selected component
         drawText(selectedType, 100, 100);
-        drawText("(" + main.elPunto().x + ", " + main.elPunto().y + ")", 100, uiport.getScreenHeight() - 100);
+
+        // draw cursor coordinates
+        Point pnt = main.elPunto();
+        drawText("(" + Math.round(pnt.x) + ", " + Math.round(pnt.y) + ")",
+                100, uiport.getScreenHeight() - 100);
+
+        // draw message
         long duration = 3000;
         if (System.currentTimeMillis() - msgTime <= duration) {
             main.font.setColor(msgColor);
             drawText(message, (uiport.getScreenWidth()-layout.width)*0.5f, uiport.getScreenHeight() - 100);
         }
+
         // draw circuit stats
         if (mainCircuit != null && mainCircuit.canShow) {
             DecimalFormat df = new DecimalFormat("#.##");
             df.setRoundingMode(RoundingMode.HALF_UP);
-            String v = "Circuit voltage: " + mainCircuit.voltage + " Volt(s)";
+
+            String v = "Battery voltage: " + mainCircuit.voltage + " Volt(s)";
             layout.setText(main.font, v);
             drawText(v, uiport.getScreenWidth() - 100 - layout.width,
                     uiport.getScreenHeight() - 100 - layout.height);
+
             String r = "Circuit equivalent resistance: " + df.format(mainCircuit.resistance) + " Ohm(s)";
             layout.setText(main.font, r);
             drawText(r, uiport.getScreenWidth() - 100 - layout.width,
                     uiport.getScreenHeight() - 130 - layout.height);
-            String cu = mainCircuit.current > 10000 ? "-1" : df.format(mainCircuit.current);
-            String c = "Circuit Current: " + (Objects.equals(cu, "-1") ? "NA " : cu) + " Ampere(s)";
+
+            String cu = mainCircuit.current == 1/0. ? "-1" : df.format(mainCircuit.current);
+            String c = "Main Current: " + (Objects.equals(cu, "-1") ? "NA " : cu) + " Ampere(s)";
             layout.setText(main.font, c);
             drawText(c, uiport.getScreenWidth() - 100 - layout.width,
                     uiport.getScreenHeight() - 160 - layout.height);
