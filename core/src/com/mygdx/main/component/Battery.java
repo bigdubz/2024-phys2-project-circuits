@@ -1,5 +1,6 @@
 package com.mygdx.main.component;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.mygdx.main.Main;
 import com.mygdx.main.utils.Line;
@@ -84,11 +85,11 @@ public class Battery extends Component {
         }
     }
 
-    public void setDir() {
+    public boolean setDir() {
         if (pos_term.pos1.getRect().overlaps(positive.getRect())) {
-            pos_term.setDirection(pos_term.con2, pos_term.pos2);
+            return pos_term.setDirection(pos_term.con2, pos_term.pos2);
         } else {
-            pos_term.setDirection(pos_term.con1, pos_term.pos1);
+            return pos_term.setDirection(pos_term.con1, pos_term.pos1);
         }
     }
 
@@ -123,10 +124,18 @@ public class Battery extends Component {
     }
 
     @Override
-    public void action() {
-        Line temp = new Line(positive);
-        positive = new Line(negative);
-        negative = new Line(temp);
+    public void action(int key) {
+        if (key == Input.Keys.E) {
+            Line temp = new Line(positive);
+            positive = new Line(negative);
+            negative = new Line(temp);
+        }
+        else if (key == Input.Keys.J) {
+            voltage++;
+        }
+        else if (key == Input.Keys.K) {
+            voltage--;
+        }
     }
 
     public int getVoltage() {

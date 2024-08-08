@@ -3,7 +3,9 @@ package com.mygdx.main.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -19,6 +21,10 @@ import com.mygdx.main.utils.Point;
 import com.mygdx.main.component.Wire;
 import com.mygdx.main.utils.Rect;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.Objects;
+
 
 public class MainScreen implements Screen {
 
@@ -30,14 +36,17 @@ public class MainScreen implements Screen {
     private final Array<String> allTypes;
     private final Array<Component> components;
     private final Array<Component> slctdComponents;
-    private final Array<Component> visited;
     private Component selectedComponent;
     private String selectedType;
-    private Circuit testCircuit;
+    private Circuit mainCircuit;
     private final Rect selectionRect;
     private boolean selection = false;
     private boolean slctdCompPlaced = false;
     private int typeIndex = 0;
+    private long msgTime = System.currentTimeMillis();
+    private String message = "";
+    private Color msgColor;
+    private final GlyphLayout layout;
 
     public MainScreen(Main main) {
         this.main = main;
@@ -51,7 +60,6 @@ public class MainScreen implements Screen {
 
         this.components = new Array<>();
         this.slctdComponents = new Array<>();
-        this.visited = new Array<>();
 
         this.allTypes = new Array<>();
         this.allTypes.add("Wire");
@@ -60,6 +68,10 @@ public class MainScreen implements Screen {
 
         this.selectionRect = new Rect();
         this.selectedType = allTypes.get(0);
+
+        this.msgColor = Color.WHITE;
+
+        this.layout = new GlyphLayout();
     }
 
     @Override
@@ -100,36 +112,18 @@ public class MainScreen implements Screen {
 
     void handleInput() {
 
-        // test
-        if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
+        // Set circuit
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
             createCircuit();
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
-            System.out.println(main.elPunto().x + ", " + main.elPunto().y);
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
-            for (int i = 0; i < components.size; i++) {
-                Component comp = components.get(i);
-                comp.checkConnected();
-                comp.to = null;
-                comp.toPnt = null;
+            resetCompsDir();
+            if (!mainCircuit.start()) {
+                msgTime = System.currentTimeMillis();
+                message = "Error occurred during circuit creation! (probably open circuit)";
+                msgColor = Color.RED;
+                layout.setText(main.font, message);
             }
+            mainCircuit.getEquivalentResistance();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
-            visited.clear();
-            for (int i = 0; i < components.size; i++) {
-                Component comp = components.get(i);
-                if (!(comp instanceof Battery)) continue;
-                ((Battery) comp).setDir();
-            }
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C) && testCircuit != null) {
-            double r = testCircuit.getTotalResistance();
-            System.out.println(r);
-        }
-        // end test
 
         // select next component
         if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
@@ -162,7 +156,22 @@ public class MainScreen implements Screen {
         // use action key on selected component
         if (slctdComponents.size == 1) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-                slctdComponents.pop().setSelected(false).action();
+                slctdComponents.pop().setSelected(false).action(Input.Keys.E);
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.J)) {
+                slctdComponents.pop().setSelected(false).action(Input.Keys.J);
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
+                slctdComponents.pop().setSelected(false).action(Input.Keys.K);
+            }
+
+            // show current component internal resistance
+            if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+                msgTime = System.currentTimeMillis();
+                msgColor = Color.YELLOW;
+                message = "Component internal resistance: " +
+                        slctdComponents.pop().setSelected(false).resistance + " Ohms";
+                layout.setText(main.font, message);
             }
         }
 
@@ -219,11 +228,36 @@ public class MainScreen implements Screen {
             msr().end();
         }
 
-        // draw ui (will make a UI class if this gets long enough)
+        // draw UI
         uiport.apply(true);
         msb().setProjectionMatrix(uiport.getCamera().combined);
         main.sb.begin();
+        main.font.setColor(1,1,1,1);
         drawText(selectedType, 100, 100);
+        drawText("(" + main.elPunto().x + ", " + main.elPunto().y + ")", 100, uiport.getScreenHeight() - 100);
+        long duration = 3000;
+        if (System.currentTimeMillis() - msgTime <= duration) {
+            main.font.setColor(msgColor);
+            drawText(message, (uiport.getScreenWidth()-layout.width)*0.5f, uiport.getScreenHeight() - 100);
+        }
+        // draw circuit stats
+        if (mainCircuit != null && mainCircuit.canShow) {
+            DecimalFormat df = new DecimalFormat("#.##");
+            df.setRoundingMode(RoundingMode.HALF_UP);
+            String v = "Circuit voltage: " + mainCircuit.voltage + " Volt(s)";
+            layout.setText(main.font, v);
+            drawText(v, uiport.getScreenWidth() - 100 - layout.width,
+                    uiport.getScreenHeight() - 100 - layout.height);
+            String r = "Circuit equivalent resistance: " + df.format(mainCircuit.resistance) + " Ohm(s)";
+            layout.setText(main.font, r);
+            drawText(r, uiport.getScreenWidth() - 100 - layout.width,
+                    uiport.getScreenHeight() - 130 - layout.height);
+            String cu = mainCircuit.current > 10000 ? "-1" : df.format(mainCircuit.current);
+            String c = "Circuit Current: " + (Objects.equals(cu, "-1") ? "NA " : cu) + " Ampere(s)";
+            layout.setText(main.font, c);
+            drawText(c, uiport.getScreenWidth() - 100 - layout.width,
+                    uiport.getScreenHeight() - 160 - layout.height);
+        }
         main.sb.end();
     }
 
@@ -316,7 +350,7 @@ public class MainScreen implements Screen {
     }
 
     private void createCircuit() {
-        testCircuit = new Circuit(main, components);
+        mainCircuit = new Circuit(main, components);
     }
 
     public void removeComponent(Component component) {
@@ -351,6 +385,15 @@ public class MainScreen implements Screen {
     }
 
     public Circuit getCircuit() {
-        return testCircuit;
+        return mainCircuit;
+    }
+
+    private void resetCompsDir() {
+        for (int i = 0; i < components.size; i++) {
+            Component comp = components.get(i);
+            comp.checkConnected();
+            comp.to = null;
+            comp.toPnt = null;
+        }
     }
 }

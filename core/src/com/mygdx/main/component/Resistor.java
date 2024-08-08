@@ -1,5 +1,6 @@
 package com.mygdx.main.component;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.mygdx.main.Main;
 import com.mygdx.main.utils.Point;
@@ -40,13 +41,17 @@ public class Resistor extends Component {
         }
         msr().circle(pos1.x, pos1.y, 10);
         if (toPnt != null) {
-            msr().setColor(1, 0, 0, 1);
-            toPnt.getRect().getExpanded().draw(msr());
+            msr().setColor(1, 1, 0, 1);
+            drawArrow(20);
         }
     }
 
     @Override
-    public void action() {
+    public void action(int key) {
+        if (key == Input.Keys.J)
+            resistance++;
+        else if (key == Input.Keys.K)
+            resistance--;
     }
 
     @Override

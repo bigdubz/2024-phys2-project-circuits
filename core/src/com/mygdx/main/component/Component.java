@@ -23,7 +23,6 @@ public abstract class Component extends Actor {
     protected boolean currValid = false;
     public boolean previewing = true;
     public boolean selected = false;
-    public float current; // amps
     public float resistance; // ohms
 
     Component(Main main) {
@@ -37,6 +36,26 @@ public abstract class Component extends Actor {
 
     protected ShapeRenderer msr() {
         return main.sr;
+    }
+
+    void drawArrow(float length) {
+        float width = 4;
+        Point mid = new Point((pos1.x + pos2.x) * 0.5f, (pos1.y + pos2.y) * 0.5f);
+        Point other = toPnt.equals(pos1) ? pos2 : pos1;
+        msr().circle(mid.x, mid.y, width*0.5f);
+        if (toPnt.y < other.y) {
+            msr().rectLine(mid.x, mid.y, mid.x-length, mid.y+length, width);
+            msr().rectLine(mid.x, mid.y, mid.x+length, mid.y+length, width);
+        } else if (toPnt.y > other.y) {
+            msr().rectLine(mid.x, mid.y, mid.x-length, mid.y-length, width);
+            msr().rectLine(mid.x, mid.y, mid.x+length, mid.y-length, width);
+        } else if (toPnt.x > other.x) {
+            msr().rectLine(mid.x, mid.y, mid.x-length, mid.y+length, width);
+            msr().rectLine(mid.x, mid.y, mid.x-length, mid.y-length, width);
+        } else {
+            msr().rectLine(mid.x, mid.y, mid.x+length, mid.y+length, width);
+            msr().rectLine(mid.x, mid.y, mid.x+length, mid.y-length, width);
+        }
     }
 
     public Component setSelected(boolean val) {
@@ -79,7 +98,7 @@ public abstract class Component extends Actor {
                 (other.pos1.getRect().overlaps(this.rect) && other.pos2.getRect().overlaps(this.rect));
     }
 
-    public abstract void action();
+    public abstract void action(int key);
 
     protected abstract boolean valid(Point pnt);
 
@@ -122,10 +141,10 @@ public abstract class Component extends Actor {
         return pos2;
     }
 
-    public void setDirection(Array<Component> direction, Point point) {
+    public boolean setDirection(Array<Component> direction, Point point) {
         this.to = direction;
         this.toPnt = point;
-        main.mainScreen.getCircuit().setDir(this);
+        return main.mainScreen.getCircuit().setDir(this);
     }
 
     protected abstract void setTerminals();

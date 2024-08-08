@@ -45,8 +45,8 @@ public class Wire extends Component {
         }
         msr().circle(pos1.x, pos1.y, 5);
         if (toPnt != null) {
-            msr().setColor(1, 0, 0, 1);
-            toPnt.getRect().getExpanded().draw(msr());
+            msr().setColor(1, 1, 0, 1);
+            drawArrow(15);
         }
     }
 
@@ -102,7 +102,7 @@ public class Wire extends Component {
     }
 
     @Override
-    public void action() {
+    public void action(int key) {
 
     }
 }
