@@ -19,16 +19,6 @@ import com.mygdx.main.utils.Point;
 import com.mygdx.main.component.Wire;
 import com.mygdx.main.utils.Rect;
 
-/*
-Calculate shit across components:
-    - We know the total voltage a battery supplies, and the internal resistance of each component.
-    1-  Calculate total resistance as if it were a single component (combined resistance)
-    2-  Find total current going through the circuit (from the beginning til the end)
-    3-  Go through the circuit, calculating the voltage across each component in series and subtracting that value from
-        the total voltage
-    4-  Once the voltage across a component is known, current can be calculated
-    5-  For every junction encountered, repeat steps 1 through 4.
-*/
 
 public class MainScreen implements Screen {
 
@@ -112,15 +102,10 @@ public class MainScreen implements Screen {
 
         // test
         if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
-            if (createCircuit()) {
-                System.out.println("success");
-            } else {
-                System.out.println("nosuccess");
-//                testCircuit = null;
-            }
+            createCircuit();
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
-            System.out.println(main.lePoint().x + ", " + main.lePoint().y);
+            System.out.println(main.elPunto().x + ", " + main.elPunto().y);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
@@ -141,7 +126,8 @@ public class MainScreen implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.C) && testCircuit != null) {
-            System.out.println(testCircuit.getTotalResistance());
+            double r = testCircuit.getTotalResistance();
+            System.out.println(r);
         }
         // end test
 
@@ -167,7 +153,7 @@ public class MainScreen implements Screen {
 
         // add component
         if (selectedComponent != null && !slctdCompPlaced) {
-            if (Gdx.input.isKeyPressed(Input.Keys.F)) selectedComponent.previewPos2(main.lePoint());
+            if (Gdx.input.isKeyPressed(Input.Keys.F)) selectedComponent.previewPos2(main.elPunto());
             else {
                 placeComponent(selectedComponent);
             }
@@ -219,7 +205,7 @@ public class MainScreen implements Screen {
 
         msr().begin(ShapeRenderer.ShapeType.Filled);
         if (!selection) {
-            Point cursor = main.lePoint();
+            Point cursor = main.elPunto();
             msr().setColor(1, 0, 0, 1);
             msr().circle(cursor.x, cursor.y, 5);
         }
@@ -296,7 +282,7 @@ public class MainScreen implements Screen {
     }
 
     private void placeComponent(Component component) {
-        if (selectedComponent.setPos2(main.lePoint())) {
+        if (selectedComponent.setPos2(main.elPunto())) {
             if (checkExistent(component)) {
                 removeComponent(component);
             }
@@ -329,9 +315,8 @@ public class MainScreen implements Screen {
         }
     }
 
-    private boolean createCircuit() {
+    private void createCircuit() {
         testCircuit = new Circuit(main, components);
-        return testCircuit.checkValid();
     }
 
     public void removeComponent(Component component) {
@@ -363,10 +348,6 @@ public class MainScreen implements Screen {
 
     public Array<Component> getComponents() {
         return components;
-    }
-
-    public Array<Component> getVisited() {
-        return this.visited;
     }
 
     public Circuit getCircuit() {

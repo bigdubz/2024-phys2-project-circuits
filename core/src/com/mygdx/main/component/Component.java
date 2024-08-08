@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.main.Main;
-import com.mygdx.main.Series;
 import com.mygdx.main.utils.Point;
 import com.mygdx.main.utils.Rect;
 
@@ -29,7 +28,7 @@ public abstract class Component extends Actor {
 
     Component(Main main) {
         this.main = main;
-        this.pos1 = this.main.lePoint();
+        this.pos1 = this.main.elPunto();
         this.main.mainScreen.addActor(this);
         this.rect = new Rect(this.pos1);
         this.con1 = new Array<>();

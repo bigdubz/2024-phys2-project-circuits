@@ -43,7 +43,7 @@ public class Series {
     }
 
     public void setSeriesDir() {
-        boolean check = currentComp.to != null && currentComp.to.size > 1; // if junction observed
+        boolean check = currentComp.to != null && currentComp.to.size > 1; // if junction found
         while (!check && !(currentComp instanceof Battery)) {
             Component con1comp = currentComp.con1.first();
             Component con2comp = currentComp.con2.first();
@@ -76,5 +76,17 @@ public class Series {
             currentComp = currentComp.con1.first();
         }
         return false;
+    }
+
+    public float getResistance() {
+        float resistance = 0;
+        currentComp = startingComp;
+
+        while (currentComp.to != null && currentComp.to.size == 1 && !(currentComp instanceof Battery)) {
+            resistance += currentComp.resistance;
+            currentComp = currentComp.to.first();
+        }
+
+        return resistance;
     }
 }

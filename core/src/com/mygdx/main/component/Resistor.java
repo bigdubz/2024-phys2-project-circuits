@@ -47,7 +47,6 @@ public class Resistor extends Component {
 
     @Override
     public void action() {
-
     }
 
     @Override

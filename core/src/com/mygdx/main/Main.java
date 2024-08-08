@@ -45,7 +45,7 @@ public class Main extends Game {
 		font.dispose();
 	}
 
-	public Point lePoint() {
+	public Point elPunto() {
 		int mapX = getMx();
 		int mapY = getMy();
 		float x = MathUtils.floor(mapX*tileSizeInverse)*tileSize;

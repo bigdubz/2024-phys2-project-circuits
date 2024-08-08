@@ -128,4 +128,8 @@ public class Battery extends Component {
         positive = new Line(negative);
         negative = new Line(temp);
     }
+
+    public int getVoltage() {
+        return voltage;
+    }
 }
