@@ -1,3 +1,5 @@
+***GITHUB LINK: https://github.com/bigdubz/2024-phys2-project-circuits***
+
 # 2024 Summer PSUT Physics 2 Project: Circuit Builder and Resistance Calculator
  
 ## What it can do
